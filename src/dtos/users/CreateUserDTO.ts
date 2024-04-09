@@ -1,11 +1,17 @@
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
+import { UserSchema } from '../../schemas/UserSchema';
+
+JoiSchemaOptions({ allowUnknown: false });
 export class CreateUserDTO {
+  @JoiSchema(UserSchema.username.required())
   name: string;
+
+  @JoiSchema(UserSchema.email.required())
   email: string;
+
+  @JoiSchema(UserSchema.role.required())
   userRole: string;
 
-  constructor(name: string, email: string, userRole: string) {
-    this.name = name;
-    this.email = email;
-    this.userRole = userRole;
-  }
+  @JoiSchema(UserSchema.password.required())
+  password: string;
 }

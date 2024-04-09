@@ -1,9 +1,11 @@
-export class LoggedUserDTO {
-  email: string;
-  password: string;
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
+import { AuthenticationSchema } from '../../schemas/AuthenticationSchema';
 
-  constructor(email: string, password: string) {
-    this.email = email;
-    this.password = password;
-  }
+JoiSchemaOptions({ allowUnknown: false });
+export class LoggedUserDTO {
+  @JoiSchema(AuthenticationSchema.email.required())
+  email: string;
+
+  @JoiSchema(AuthenticationSchema.password.required())
+  password: string;
 }

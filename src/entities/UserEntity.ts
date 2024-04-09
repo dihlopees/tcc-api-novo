@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,11 +20,14 @@ export class UserEntity {
   @Column({ length: 60, nullable: true })
   email: string;
 
-  @Column({ name: 'user_role' })
-  userRole: string;
+  @Column({ length: 60, nullable: true })
+  password: string;
 
-  @ManyToOne(() => RoleEntity)
-  @JoinColumn({ name: 'user_role' })
+  @Column({ name: 'role_id' })
+  roleId: number;
+
+  @OneToOne(() => RoleEntity)
+  @JoinColumn({ name: 'role_id' })
   role: RoleEntity;
 
   @CreateDateColumn()

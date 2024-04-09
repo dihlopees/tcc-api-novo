@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { JoiPipe } from 'nestjs-joi';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { DeleteUsersDTO } from '../dtos/users/DeleteUsersDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
@@ -14,7 +15,6 @@ import { UserEntity } from '../entities/UserEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { UserService } from '../services/UserService';
-import { JoiPipe } from 'nestjs-joi';
 
 @Controller('user')
 export class UserController {
@@ -23,6 +23,8 @@ export class UserController {
   @Post()
   async createUser(@Body(JoiPipe) user: CreateUserDTO): Promise<UserEntity> {
     const newUser = await this.userService.createUser(user);
+
+    // return new UserDTO(newUser);
     return newUser;
   }
 

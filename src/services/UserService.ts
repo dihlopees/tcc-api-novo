@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
@@ -28,10 +29,12 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
 
+    const encryptPassword = await bcrypt.hash(user.password, 10);
     const newUser = {
       name: user.name,
       email: user.email,
-      userRole: roleToSave.role,
+      roleId: roleToSave.id,
+      password: encryptPassword,
     };
 
     return await this.usersRepository.save(newUser);
@@ -52,7 +55,7 @@ export class UserService {
     const updateResult = await this.usersRepository.update(user.id, {
       name: user.name,
       email: user.email,
-      userRole: roleToSave.role,
+      roleId: roleToSave.id,
     });
     return updateResult.affected === 1;
   }

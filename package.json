@@ -25,14 +25,15 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.1.1",
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "nestjs-joi": "^1.10.0",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.20",
-    "bcrypt": "^5.0.1"
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
