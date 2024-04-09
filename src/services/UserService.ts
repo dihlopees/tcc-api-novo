@@ -75,18 +75,35 @@ export class UserService {
     return myUser;
   }
 
-  async getAll(users: number[]) {}
+  async getAll(users?: number[]) {
+    const allUsers = await this.usersRepository.find();
 
-  async deleteUsers(usersToDelete: number[], loggedUser: number) {
+    if (!allUsers.length)
+      throw HttpExceptionDTO.warn(
+        `Users not found`,
+        'Usuários não encontrados',
+        HttpStatus.NOT_FOUND,
+      );
+
+    return allUsers;
+  }
+
+  async deleteUsers(
+    usersToDelete: number[],
+    loggedUser: number,
+  ): Promise<number | null | undefined> {
     const user = await this.usersRepository.findOneBy({
       id: loggedUser,
     });
 
     if (!user || user.role.role !== 'admin')
       throw HttpExceptionDTO.warn(
-        `User not found`,
-        'Usuário não encontrada',
-        HttpStatus.NOT_FOUND,
+        `User not have permission`,
+        'Usuário nãotem permissão para deletar usuários',
+        HttpStatus.FORBIDDEN,
       );
+
+    const deletedUsers = await this.usersRepository.delete(usersToDelete);
+    return deletedUsers.affected;
   }
 }

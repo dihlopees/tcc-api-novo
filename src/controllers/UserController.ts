@@ -21,35 +21,49 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async createUser(@Body(JoiPipe) user: CreateUserDTO): Promise<UserEntity> {
+  async createUser(
+    @Body(JoiPipe) user: CreateUserDTO,
+  ): Promise<ResponseDTO<UserEntity, unknown>> {
     const newUser = await this.userService.createUser(user);
+    return new ResponseDTO(HttpStatus.OK, 'User retrived', newUser);
 
     // return new UserDTO(newUser);
-    return newUser;
   }
 
   @Patch()
-  async editUser(@Body(JoiPipe) user: UpdateUserDTO) {
+  async editUser(
+    @Body(JoiPipe) user: UpdateUserDTO,
+  ): Promise<ResponseDTO<true, unknown> | undefined> {
     const newUser = await this.userService.updateUser(user);
     if (newUser)
-      return new ResponseDTO(HttpStatus.OK, 'Usuário atualizado com sucesso');
+      return new ResponseDTO(
+        HttpStatus.OK,
+        'Usuário atualizado com sucesso',
+        newUser,
+      );
   }
 
   @Get('/me')
-  async getMe(@Body(JoiPipe) user: number) {
+  async getMe(
+    @Body(JoiPipe) user: number,
+  ): Promise<ResponseDTO<UserEntity, unknown>> {
     const myUser = await this.userService.getMe(user);
-    return myUser;
+    return new ResponseDTO(HttpStatus.OK, 'User retrived', myUser);
   }
 
   @Get('/all')
-  async getAll(@Body(JoiPipe) user: number) {
-    const allUsers = await this.userService.getAll([user]);
+  async getAll(
+    @Body(JoiPipe) users?: number[],
+  ): Promise<ResponseDTO<UserEntity[], unknown>> {
+    const allUsers = await this.userService.getAll(users);
 
-    return allUsers;
+    return new ResponseDTO(HttpStatus.OK, 'Users retrived', allUsers);
   }
 
   @Delete()
-  async deleteUsers(@Body(JoiPipe) users: DeleteUsersDTO) {
+  async deleteUsers(
+    @Body(JoiPipe) users: DeleteUsersDTO,
+  ): Promise<ResponseDTO<unknown, unknown>> {
     try {
       await this.userService.deleteUsers(users.ids, 1);
       return new ResponseDTO(HttpStatus.OK, 'Users deleted');
