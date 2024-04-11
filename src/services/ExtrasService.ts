@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
-import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
+import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
 import { Extras } from '../entities/ExtrasEntity';
 import { UnitEntity } from '../entities/UnitEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -37,8 +37,23 @@ export class ExtrasService {
     return await this.extrasRepository.save(newExtra);
   }
 
-  async update(unit: EditUnitDTO) {
-    return await this.extrasRepository.update(unit.id, { name: unit.name });
+  async update(entityToUpdate: UpdateExtrasDTO) {
+    const unitEntity = await this.unitRepository.findOneBy({
+      name: entityToUpdate.unit,
+    });
+
+    if (!unitEntity)
+      throw HttpExceptionDTO.warn(
+        `Not found`,
+        'Não encontrada a unidade informada',
+        HttpStatus.NOT_FOUND,
+      );
+
+    return await this.extrasRepository.update(entityToUpdate.id, {
+      name: entityToUpdate.name,
+      availableQuantity: entityToUpdate.availableQuantity,
+      unitId: unitEntity.id,
+    });
   }
 
   async getOne(user: number) {

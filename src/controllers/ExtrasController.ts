@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
-import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
+import { DeleteExtrasDTO } from '../dtos/extras/DeleteExtrasDTO';
+import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { ExtrasService } from '../services/ExtrasService';
@@ -26,7 +27,7 @@ export class ExtrasController {
   }
 
   @Patch()
-  async edit(@Body(JoiPipe) entityToUpdate: EditUnitDTO) {
+  async edit(@Body(JoiPipe) entityToUpdate: UpdateExtrasDTO) {
     const entityEdited = await this.extrasService.update(entityToUpdate);
     return new ResponseDTO(
       HttpStatus.OK,
@@ -49,7 +50,7 @@ export class ExtrasController {
   }
 
   @Delete()
-  async delete(@Body(JoiPipe) deleteEntity: EditUnitDTO) {
+  async delete(@Body(JoiPipe) deleteEntity: DeleteExtrasDTO) {
     try {
       await this.extrasService.delete(deleteEntity.id, 1);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
