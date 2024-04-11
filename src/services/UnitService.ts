@@ -2,9 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUnitDTO } from '../dtos/unit/CreateUnitDTO';
-import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
+import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
 import { UnitEntity } from '../entities/UnitEntity';
-import { UserEntity } from '../entities/UserEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
 @Injectable()
@@ -18,52 +17,43 @@ export class UnitService {
     return await this.unitRepository.save(unit);
   }
 
-  async update(user: UpdateUserDTO) {}
+  async update(unit: EditUnitDTO) {
+    return await this.unitRepository.update(unit.id, { name: unit.name });
+  }
 
-  async getOne(user: number): Promise<UserEntity> {
-    const myUser = await this.unitRepository.findOneBy({
+  async getOne(user: number) {
+    const entityFound = await this.unitRepository.findOneBy({
       id: user,
     });
 
-    if (!myUser)
+    if (!entityFound)
       throw HttpExceptionDTO.warn(
-        `User not found`,
-        'Usuário não encontrada',
+        `Not found`,
+        'Não encontrada',
         HttpStatus.NOT_FOUND,
       );
 
-    return myUser;
+    return entityFound;
   }
 
-  async getAll(users?: number[]) {
-    const allUsers = await this.unitRepository.find();
+  async getAll(entities?: number[]) {
+    const allEntities = await this.unitRepository.find();
 
-    if (!allUsers.length)
+    if (!allEntities.length)
       throw HttpExceptionDTO.warn(
-        `Users not found`,
-        'Usuários não encontrados',
+        `Not found`,
+        'Não encontrados',
         HttpStatus.NOT_FOUND,
       );
 
-    return allUsers;
+    return allEntities;
   }
 
   async delete(
-    usersToDelete: number[],
+    entityToDelete: number,
     loggedUser: number,
   ): Promise<number | null | undefined> {
-    const user = await this.unitRepository.findOneBy({
-      id: loggedUser,
-    });
-
-    if (!user || user.role.role !== 'admin')
-      throw HttpExceptionDTO.warn(
-        `User not have permission`,
-        'Usuário nãotem permissão para deletar usuários',
-        HttpStatus.FORBIDDEN,
-      );
-
-    const deletedUsers = await this.unitRepository.delete(usersToDelete);
-    return deletedUsers.affected;
+    const deletedEntities = await this.unitRepository.delete(entityToDelete);
+    return deletedEntities.affected;
   }
 }

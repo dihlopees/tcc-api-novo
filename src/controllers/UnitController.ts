@@ -4,14 +4,13 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Param,
   Patch,
   Post,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateUnitDTO } from '../dtos/unit/CreateUnitDTO';
-import { DeleteUsersDTO } from '../dtos/users/DeleteUsersDTO';
-import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
-import { UserEntity } from '../entities/UserEntity';
+import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { UnitService } from '../services/UnitService';
@@ -21,50 +20,40 @@ export class UnitController {
   constructor(private readonly unitService: UnitService) {}
 
   @Post()
-  async create(
-    @Body(JoiPipe) unit: CreateUnitDTO,
-  ): Promise<ResponseDTO<UserEntity, unknown>> {
-    const newUser = await this.unitService.create(unit);
-    return new ResponseDTO(HttpStatus.OK, 'User created', newUser);
+  async create(@Body(JoiPipe) unit: CreateUnitDTO) {
+    const entityCreated = await this.unitService.create(unit);
+    return new ResponseDTO(HttpStatus.OK, 'Criado', entityCreated);
   }
 
   @Patch()
-  async edit(
-    @Body(JoiPipe) user: UpdateUserDTO,
-  ): Promise<ResponseDTO<true, unknown> | undefined> {
-    const newUser = await this.unitService.update(user);
-    if (newUser)
-      return new ResponseDTO(
-        HttpStatus.OK,
-        'Usuário atualizado com sucesso',
-        newUser,
-      );
-  }
-
-  @Get('/one')
-  async getOne(
-    @Body(JoiPipe) user: number,
-  ): Promise<ResponseDTO<UserEntity, unknown>> {
-    const myUser = await this.unitService.getOne(user);
-    return new ResponseDTO(HttpStatus.OK, 'User retrived', myUser);
+  async edit(@Body(JoiPipe) entityToUpdate: EditUnitDTO) {
+    const entityEdited = await this.unitService.update(entityToUpdate);
+    return new ResponseDTO(
+      HttpStatus.OK,
+      'Atualizado com sucesso',
+      entityEdited.affected,
+    );
   }
 
   @Get('/all')
-  async getAll(
-    @Body(JoiPipe) users?: number[],
-  ): Promise<ResponseDTO<UserEntity[], unknown>> {
-    const allUsers = await this.unitService.getAll(users);
+  async getAll() {
+    console.log('oi');
+    const allEntities = await this.unitService.getAll();
 
-    return new ResponseDTO(HttpStatus.OK, 'Users retrived', allUsers);
+    return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
+  }
+
+  @Get('/one/:id')
+  async getOne(@Param('id') getEntity: number) {
+    const entityFound = await this.unitService.getOne(getEntity);
+    return new ResponseDTO(HttpStatus.OK, 'Encontrado', entityFound);
   }
 
   @Delete()
-  async delete(
-    @Body(JoiPipe) users: DeleteUsersDTO,
-  ): Promise<ResponseDTO<unknown, unknown>> {
+  async delete(@Body(JoiPipe) deleteEntity: EditUnitDTO) {
     try {
-      await this.unitService.delete(users.ids, 1);
-      return new ResponseDTO(HttpStatus.OK, 'Users deleted');
+      await this.unitService.delete(deleteEntity.id, 1);
+      return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(
         `Users not deleted`,
