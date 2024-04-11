@@ -1,5 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { UnitEntity } from './UnitEntity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Extras {
@@ -9,9 +8,9 @@ export class Extras {
   @Column({ length: 60 })
   name: string;
 
-  @ManyToOne(() => UnitEntity)
-  unit: UnitEntity;
+  @Column({ name: 'available_quantity' })
+  availableQuantity: number;
 
-  @Column()
-  available_quantity: number;
+  @Column({ name: 'unit_id' })
+  unitId: number;
 }

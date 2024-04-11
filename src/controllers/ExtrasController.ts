@@ -9,25 +9,25 @@ import {
   Post,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
-import { CreateUnitDTO } from '../dtos/unit/CreateUnitDTO';
+import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
 import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
-import { UnitService } from '../services/UnitService';
+import { ExtrasService } from '../services/ExtrasService';
 
-@Controller('unit')
-export class UnitController {
-  constructor(private readonly unitService: UnitService) {}
+@Controller('extras')
+export class ExtrasController {
+  constructor(private readonly extrasService: ExtrasService) {}
 
   @Post()
-  async create(@Body(JoiPipe) unit: CreateUnitDTO) {
-    const entityCreated = await this.unitService.create(unit);
+  async create(@Body(JoiPipe) unit: CreateExtrasDTO) {
+    const entityCreated = await this.extrasService.create(unit);
     return new ResponseDTO(HttpStatus.OK, 'Criado', entityCreated);
   }
 
   @Patch()
   async edit(@Body(JoiPipe) entityToUpdate: EditUnitDTO) {
-    const entityEdited = await this.unitService.update(entityToUpdate);
+    const entityEdited = await this.extrasService.update(entityToUpdate);
     return new ResponseDTO(
       HttpStatus.OK,
       'Atualizado com sucesso',
@@ -37,21 +37,21 @@ export class UnitController {
 
   @Get('/all')
   async getAll() {
-    const allEntities = await this.unitService.getAll();
+    const allEntities = await this.extrasService.getAll();
 
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
   }
 
   @Get('/one/:id')
   async getOne(@Param('id') getEntity: number) {
-    const entityFound = await this.unitService.getOne(getEntity);
+    const entityFound = await this.extrasService.getOne(getEntity);
     return new ResponseDTO(HttpStatus.OK, 'Encontrado', entityFound);
   }
 
   @Delete()
   async delete(@Body(JoiPipe) deleteEntity: EditUnitDTO) {
     try {
-      await this.unitService.delete(deleteEntity.id, 1);
+      await this.extrasService.delete(deleteEntity.id, 1);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(
