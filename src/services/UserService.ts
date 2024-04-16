@@ -79,7 +79,7 @@ export class UserService {
   }
 
   async getAll(users?: number[]) {
-    const allUsers = await this.usersRepository.find();
+    const allUsers = await this.usersRepository.find({ relations: ['role'] });
 
     if (!allUsers.length)
       throw HttpExceptionDTO.warn(
