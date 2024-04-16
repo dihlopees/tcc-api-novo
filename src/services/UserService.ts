@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { RoleEntity } from '../entities/RoleEntity';
 import { UserEntity } from '../entities/UserEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -17,7 +18,7 @@ export class UserService {
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
-  async createUser(user: CreateUserDTO): Promise<UserEntity> {
+  async createUser(user: CreateUserDTO): Promise<UserDTO> {
     const roleToSave = await this.roleRepository.findOneBy({
       role: user.userRole,
     });
@@ -37,7 +38,9 @@ export class UserService {
       password: encryptPassword,
     };
 
-    return await this.usersRepository.save(newUser);
+    const savedUser = await this.usersRepository.save(newUser);
+    const myUser = new UserDTO(savedUser, roleToSave.role);
+    return myUser;
   }
 
   async updateUser(user: UpdateUserDTO): Promise<boolean> {
@@ -89,7 +92,7 @@ export class UserService {
   }
 
   async deleteUsers(
-    usersToDelete: number[],
+    usersToDelete: number,
     loggedUser: number,
   ): Promise<number | null | undefined> {
     const user = await this.usersRepository.findOneBy({

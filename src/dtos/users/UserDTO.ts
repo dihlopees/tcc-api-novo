@@ -4,12 +4,16 @@ export class UserDTO {
   id: number;
   name: string;
   email: string;
-  userRole: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 
-  constructor(user: UserEntity) {
+  constructor(user: UserEntity, role: string) {
     this.id = user.id;
     this.name = user.name;
     this.email = user.email;
-    this.userRole = user.role.role;
+    this.role = role;
+    this.createdAt = user.createdAt;
+    this.updatedAt = user.updatedAt;
   }
 }

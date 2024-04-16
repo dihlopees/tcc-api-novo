@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Param,
   Patch,
   Post,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
-import { DeleteUsersDTO } from '../dtos/users/DeleteUsersDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
 import { UserEntity } from '../entities/UserEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -21,13 +21,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async createUser(
-    @Body(JoiPipe) user: CreateUserDTO,
-  ): Promise<ResponseDTO<UserEntity, unknown>> {
+  async createUser(@Body(JoiPipe) user: CreateUserDTO) {
     const newUser = await this.userService.createUser(user);
     return new ResponseDTO(HttpStatus.OK, 'User retrived', newUser);
-
-    // return new UserDTO(newUser);
   }
 
   @Patch()
@@ -61,12 +57,12 @@ export class UserController {
     return new ResponseDTO(HttpStatus.OK, 'Users retrived', allUsers);
   }
 
-  @Delete()
+  @Delete('/:id')
   async deleteUsers(
-    @Body(JoiPipe) users: DeleteUsersDTO,
+    @Param(JoiPipe) users: number,
   ): Promise<ResponseDTO<unknown, unknown>> {
     try {
-      await this.userService.deleteUsers(users.ids, 1);
+      await this.userService.deleteUsers(users, 1);
       return new ResponseDTO(HttpStatus.OK, 'Users deleted');
     } catch (err) {
       throw HttpExceptionDTO.error(

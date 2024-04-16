@@ -30,9 +30,9 @@ export class UserEntity {
   @JoinColumn({ name: 'role_id' })
   role: RoleEntity;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: string;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
 }
