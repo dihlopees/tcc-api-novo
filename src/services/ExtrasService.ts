@@ -37,7 +37,7 @@ export class ExtrasService {
     return await this.extrasRepository.save(newExtra);
   }
 
-  async update(entityToUpdate: UpdateExtrasDTO) {
+  async update(id: number, entityToUpdate: UpdateExtrasDTO) {
     const unitEntity = await this.unitRepository.findOneBy({
       name: entityToUpdate.unit,
     });
@@ -49,7 +49,7 @@ export class ExtrasService {
         HttpStatus.NOT_FOUND,
       );
 
-    return await this.extrasRepository.update(entityToUpdate.id, {
+    return await this.extrasRepository.update(id, {
       name: entityToUpdate.name,
       availableQuantity: entityToUpdate.availableQuantity,
       unitId: unitEntity.id,

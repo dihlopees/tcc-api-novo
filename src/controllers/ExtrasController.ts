@@ -10,9 +10,7 @@ import {
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
-import { DeleteExtrasDTO } from '../dtos/extras/DeleteExtrasDTO';
 import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
-import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { ExtrasService } from '../services/ExtrasService';
 
@@ -26,9 +24,12 @@ export class ExtrasController {
     return new ResponseDTO(HttpStatus.OK, 'Criado', entityCreated);
   }
 
-  @Patch()
-  async edit(@Body(JoiPipe) entityToUpdate: UpdateExtrasDTO) {
-    const entityEdited = await this.extrasService.update(entityToUpdate);
+  @Patch('/:id')
+  async edit(
+    @Param() id: number,
+    @Body(JoiPipe) entityToUpdate: UpdateExtrasDTO,
+  ) {
+    const entityEdited = await this.extrasService.update(id, entityToUpdate);
     return new ResponseDTO(
       HttpStatus.OK,
       'Atualizado com sucesso',
@@ -49,17 +50,9 @@ export class ExtrasController {
     return new ResponseDTO(HttpStatus.OK, 'Encontrado', entityFound);
   }
 
-  @Delete()
-  async delete(@Body(JoiPipe) deleteEntity: DeleteExtrasDTO) {
-    try {
-      await this.extrasService.delete(deleteEntity.id, 1);
-      return new ResponseDTO(HttpStatus.OK, 'Deletado');
-    } catch (err) {
-      throw HttpExceptionDTO.error(
-        `Users not deleted`,
-        err,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  @Delete('/:id')
+  async delete(@Param(JoiPipe) deleteEntity: number) {
+    await this.extrasService.delete(deleteEntity, 11);
+    return new ResponseDTO(HttpStatus.OK, 'Deletado');
   }
 }
