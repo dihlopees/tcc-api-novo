@@ -17,8 +17,8 @@ export class UnitService {
     return await this.unitRepository.save(unit);
   }
 
-  async update(unit: EditUnitDTO) {
-    return await this.unitRepository.update(unit.id, { name: unit.name });
+  async update(id: number, unit: EditUnitDTO) {
+    return await this.unitRepository.update(id, { name: unit.name });
   }
 
   async getOne(user: number) {

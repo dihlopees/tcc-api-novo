@@ -25,9 +25,9 @@ export class UnitController {
     return new ResponseDTO(HttpStatus.OK, 'Criado', entityCreated);
   }
 
-  @Patch()
-  async edit(@Body(JoiPipe) entityToUpdate: EditUnitDTO) {
-    const entityEdited = await this.unitService.update(entityToUpdate);
+  @Patch('/:id')
+  async edit(@Param() id: number, @Body(JoiPipe) entityToUpdate: EditUnitDTO) {
+    const entityEdited = await this.unitService.update(id, entityToUpdate);
     return new ResponseDTO(
       HttpStatus.OK,
       'Atualizado com sucesso',
@@ -48,10 +48,10 @@ export class UnitController {
     return new ResponseDTO(HttpStatus.OK, 'Encontrado', entityFound);
   }
 
-  @Delete()
-  async delete(@Body(JoiPipe) deleteEntity: EditUnitDTO) {
+  @Delete('/:id')
+  async delete(@Param(JoiPipe) deleteEntity: number) {
     try {
-      await this.unitService.delete(deleteEntity.id, 1);
+      await this.unitService.delete(deleteEntity, 11);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(
