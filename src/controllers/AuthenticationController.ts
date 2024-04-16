@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { LoggedUserDTO } from 'src/dtos/login/LoggedUser';
+import { ResponseDTO } from '../helpers/ResponseDTO';
 import { AuthenticationService } from '../services/AuthenticationService';
 
 @Controller('auth')
@@ -10,7 +11,6 @@ export class AuthenticationController {
   @Post('/login')
   async login(@Body(JoiPipe) userDTO: LoggedUserDTO) {
     const token = await this.authenticationService.login(userDTO);
-    console.log('login');
-    return token;
+    return new ResponseDTO(HttpStatus.OK, 'User register', token);
   }
 }

@@ -1,5 +1,7 @@
-export type LoginReponseDTO = {
-    accessToken: string
-    refreshToken: string
+export class LoginReponseDTO {
+  accessToken: string;
+
+  constructor(token: string) {
+    this.accessToken = token;
   }
-  
+}
