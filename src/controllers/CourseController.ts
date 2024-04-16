@@ -11,8 +11,6 @@ import {
 import { JoiPipe } from 'nestjs-joi';
 import { CreateCourseDTO } from '../dtos/course/CreateCourseDTO';
 import { EditCourseDTO } from '../dtos/course/EditCourseDTO';
-import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
-import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { CourseService } from '../services/CourseService';
 
@@ -26,9 +24,12 @@ export class CourseController {
     return new ResponseDTO(HttpStatus.OK, 'Criado', entityCreated);
   }
 
-  @Patch()
-  async edit(@Body(JoiPipe) entityToUpdate: EditCourseDTO) {
-    const entityEdited = await this.courseService.update(entityToUpdate);
+  @Patch('/:id')
+  async edit(
+    @Param(JoiPipe) id: number,
+    @Body(JoiPipe) entityToUpdate: EditCourseDTO,
+  ) {
+    const entityEdited = await this.courseService.update(id, entityToUpdate);
     return new ResponseDTO(
       HttpStatus.OK,
       'Atualizado com sucesso',
@@ -49,17 +50,9 @@ export class CourseController {
     return new ResponseDTO(HttpStatus.OK, 'Encontrado', entityFound);
   }
 
-  @Delete()
-  async delete(@Body(JoiPipe) deleteEntity: EditUnitDTO) {
-    try {
-      await this.courseService.delete(deleteEntity.id, 1);
-      return new ResponseDTO(HttpStatus.OK, 'Deletado');
-    } catch (err) {
-      throw HttpExceptionDTO.error(
-        `Users not deleted`,
-        err,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  @Delete('/:id')
+  async delete(@Param(JoiPipe) deleteEntity: number) {
+    await this.courseService.delete(deleteEntity, 11);
+    return new ResponseDTO(HttpStatus.OK, 'Deletado');
   }
 }

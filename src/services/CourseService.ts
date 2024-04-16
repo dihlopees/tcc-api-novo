@@ -17,8 +17,8 @@ export class CourseService {
     return await this.courseRepository.save(entity);
   }
 
-  async update(unit: EditCourseDTO) {
-    return await this.courseRepository.update(unit.id, { name: unit.name });
+  async update(id: number, unit: EditCourseDTO) {
+    return await this.courseRepository.update(id, { name: unit.name });
   }
 
   async getOne(user: number) {
