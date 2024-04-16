@@ -20,7 +20,7 @@ export class UserService {
 
   async createUser(user: CreateUserDTO): Promise<UserDTO> {
     const roleToSave = await this.roleRepository.findOneBy({
-      role: user.userRole,
+      role: user.role,
     });
 
     if (!roleToSave?.role)
@@ -45,7 +45,7 @@ export class UserService {
 
   async updateUser(id: number, user: UpdateUserDTO): Promise<boolean> {
     const roleToSave = await this.roleRepository.findOneBy({
-      role: user.userRole,
+      role: user.role,
     });
 
     if (!roleToSave?.role)

@@ -1,11 +1,11 @@
 export class UpdateUserDTO {
   name?: string;
   email?: string;
-  userRole?: string;
+  role?: string;
 
-  constructor(name?: string, email?: string, userRole?: string) {
+  constructor(name?: string, email?: string, role?: string) {
     this.name = name;
     this.email = email;
-    this.userRole = userRole;
+    this.role = role;
   }
 }

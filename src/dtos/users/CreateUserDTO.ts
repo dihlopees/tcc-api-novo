@@ -10,7 +10,7 @@ export class CreateUserDTO {
   email: string;
 
   @JoiSchema(UserSchema.role.required())
-  userRole: string;
+  role: string;
 
   @JoiSchema(UserSchema.password.required())
   password: string;
