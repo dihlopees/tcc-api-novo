@@ -78,7 +78,7 @@ export class UserService {
     return myUser;
   }
 
-  async getAll(users?: number[]) {
+  async getAll(users?: number[]): Promise<UserDTO[]> {
     const allUsers = await this.usersRepository.find({ relations: ['role'] });
 
     if (!allUsers.length)
@@ -88,7 +88,7 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
 
-    return allUsers;
+    return allUsers.map((it) => new UserDTO(it, it.role.role));
   }
 
   async deleteUsers(

@@ -48,9 +48,7 @@ export class UserController {
   }
 
   @Get('/all')
-  async getAll(
-    @Body(JoiPipe) users?: number[],
-  ): Promise<ResponseDTO<UserEntity[], unknown>> {
+  async getAll(@Body(JoiPipe) users?: number[]) {
     const allUsers = await this.userService.getAll(users);
 
     return new ResponseDTO(HttpStatus.OK, 'Users retrived', allUsers);
