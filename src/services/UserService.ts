@@ -63,9 +63,12 @@ export class UserService {
     return updateResult.affected === 1;
   }
 
-  async getMe(user: number): Promise<UserEntity> {
-    const myUser = await this.usersRepository.findOneBy({
-      id: user,
+  async getMe(user: number): Promise<UserDTO> {
+    const myUser = await this.usersRepository.findOne({
+      where: {
+        id: user,
+      },
+      relations: ['role'],
     });
 
     if (!myUser)
@@ -75,7 +78,7 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
 
-    return myUser;
+    return new UserDTO(myUser, myUser.role.role);
   }
 
   async getAll(users?: number[]): Promise<UserDTO[]> {

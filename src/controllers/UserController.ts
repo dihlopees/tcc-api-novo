@@ -11,7 +11,7 @@ import {
 import { JoiPipe } from 'nestjs-joi';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
-import { UserEntity } from '../entities/UserEntity';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { UserService } from '../services/UserService';
 
@@ -42,7 +42,7 @@ export class UserController {
   @Get('/me')
   async getMe(
     @Body(JoiPipe) user: number,
-  ): Promise<ResponseDTO<UserEntity, unknown>> {
+  ): Promise<ResponseDTO<UserDTO, unknown>> {
     const myUser = await this.userService.getMe(user);
     return new ResponseDTO(HttpStatus.OK, 'User retrived', myUser);
   }
