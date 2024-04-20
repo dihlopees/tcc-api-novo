@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ItemsAllocatable } from './ItemsAllocatable';
 
 @Entity('allocatable')
 export class Allocatable {
@@ -17,12 +20,6 @@ export class Allocatable {
   @Column({ name: 'type_id' })
   typeId: number;
 
-  // @ManyToOne(() => AllocatableType)
-  // type: AllocatableType;
-
-  // @ManyToOne(() => Block, { nullable: true })
-  // block: Block;
-
   @Column({ name: 'block_id' })
   blockId: number;
 
@@ -34,4 +31,8 @@ export class Allocatable {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToOne(() => ItemsAllocatable)
+  @JoinColumn({ name: 'items_allocatable_id' })
+  items: ItemsAllocatable;
 }

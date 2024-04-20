@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { Database } from '../configurations/DatabaseConfiguration';
+import { AllocatableModule } from './AllocatableModule';
 import { AllocatableTypeModule } from './AllocatableTypeModule';
 import { AuthenticationModule } from './AuthenticationModule';
 import { BaseModule } from './BaseModule';
@@ -20,6 +21,7 @@ import { UserModule } from './UserModule';
     CourseModule,
     BlockModule,
     AllocatableTypeModule,
+    AllocatableModule,
   ],
   controllers: [],
   providers: [],

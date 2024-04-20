@@ -95,6 +95,13 @@ export class Schema {
     companyName: Joi.string().min(1).optional(),
   }).min(1);
 
+  static itemsAllocatable = Joi.object({
+    seatsQuantity: Joi.number().optional(),
+    multimediaQuantity: Joi.number().optional(),
+    outletsQuantity: Joi.number().optional(),
+    airConditionersQuantity: Joi.number().optional(),
+    allowsTransmission: Joi.boolean().optional(),
+  });
   //   static search = Joi.custom((value) => {
   //     const { object, result } = JoiCustomValidation.objectValidation(value, this.searchParams)
   //     if (result?.error) throw Error(result.error.details[0].message)
