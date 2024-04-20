@@ -2,16 +2,10 @@ import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 import { Schema } from '../../schemas/Schema';
 
 JoiSchemaOptions({ allowUnknown: false });
-export class CreateUserDTO {
+export class CreateBlockDTO {
   @JoiSchema(Schema.username.required())
   name: string;
 
-  @JoiSchema(Schema.email.required())
-  email: string;
-
-  @JoiSchema(Schema.role.required())
-  role: string;
-
-  @JoiSchema(Schema.password.required())
-  password: string;
+  @JoiSchema(Schema.id.required())
+  unitId: number;
 }

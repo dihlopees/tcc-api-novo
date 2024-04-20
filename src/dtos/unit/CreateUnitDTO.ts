@@ -1,8 +1,8 @@
 import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
-import { UserSchema } from '../../schemas/UserSchema';
+import { Schema } from '../../schemas/Schema';
 
 JoiSchemaOptions({ allowUnknown: false });
 export class CreateUnitDTO {
-  @JoiSchema(UserSchema.username.required())
+  @JoiSchema(Schema.username.required())
   name: string;
 }
