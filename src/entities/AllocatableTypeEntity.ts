@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('allocatable_type')
 export class AllocatableType {
   @PrimaryGeneratedColumn()
   id: number;

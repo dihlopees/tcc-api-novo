@@ -2,14 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { AllocatableType } from './AllocatableTypeEntity';
-import { Block } from './BlockEntity';
 
-@Entity()
+@Entity('allocatable')
 export class Allocatable {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,30 +14,24 @@ export class Allocatable {
   @Column({ length: 60 })
   name: string;
 
-  @ManyToOne(() => AllocatableType)
-  type: AllocatableType;
+  @Column({ name: 'type_id' })
+  typeId: number;
 
-  @ManyToOne(() => Block, { nullable: true })
-  block: Block;
+  // @ManyToOne(() => AllocatableType)
+  // type: AllocatableType;
 
-  @Column({ nullable: true })
-  seats_quantity: number;
+  // @ManyToOne(() => Block, { nullable: true })
+  // block: Block;
 
-  @Column({ nullable: true })
-  multimedia_quantity: number;
+  @Column({ name: 'block_id' })
+  blockId: number;
 
-  @Column({ nullable: true })
-  outlets_quantity: number;
+  @Column({ name: 'items_allocatable_id' })
+  itemsAllocatableId: number;
 
-  @Column({ nullable: true })
-  air_conditioners_quantity: number;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @Column({ nullable: true })
-  allows_transmission: boolean;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }
