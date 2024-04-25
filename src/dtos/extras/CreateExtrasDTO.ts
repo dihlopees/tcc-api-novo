@@ -5,6 +5,10 @@ JoiSchemaOptions({ allowUnknown: false });
 export class CreateExtrasDTO {
   @JoiSchema(Schema.username.required())
   name: string;
-  unit: string;
+
+  @JoiSchema(Schema.id.required())
+  unitId: number;
+
+  @JoiSchema(Schema.availableQuantity.required())
   availableQuantity: number;
 }
