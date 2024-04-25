@@ -11,7 +11,7 @@ export class AllocatableTypeService {
     private readonly allocatableTypeRepository: Repository<AllocatableType>,
   ) {}
 
-  async getOne(user: number) {
+  async getOne(user: number): Promise<AllocatableType> {
     const entityFound = await this.allocatableTypeRepository.findOneBy({
       id: user,
     });

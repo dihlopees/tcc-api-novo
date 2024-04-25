@@ -19,7 +19,7 @@ export class ExtrasService {
 
   async create(entity: CreateExtrasDTO): Promise<Extras> {
     const unitEntity = await this.unitRepository.findOneBy({
-      name: entity.unit,
+      id: entity.unitId,
     });
 
     if (!unitEntity)

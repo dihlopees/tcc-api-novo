@@ -56,6 +56,7 @@ export class Schema {
   static username = Joi.string();
   static role = Joi.string();
   static id = Joi.number().min(1);
+  static availableQuantity = Joi.number().min(1);
   static permissions = Joi.array().unique().items(Joi.string());
   static authorizedCompanies = Joi.array().unique().items(Joi.number());
   static authorizedClients = Joi.array()
