@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateAllocatableDTO } from '../dtos/allocatable/CreateAllocatableDTO';
-import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
+import { EditAllocatableDTO } from '../dtos/allocatable/EditAllocatableDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { AllocatableService } from '../services/AllocatableService';
@@ -26,7 +26,10 @@ export class AllocatableController {
   }
 
   @Patch('/:id')
-  async edit(@Param() id: number, @Body(JoiPipe) entityToUpdate: EditUnitDTO) {
+  async edit(
+    @Param() id: number,
+    @Body(JoiPipe) entityToUpdate: EditAllocatableDTO,
+  ) {
     const entityEdited = await this.allocatableService.update(
       id,
       entityToUpdate,

@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAllocatableDTO } from '../dtos/allocatable/CreateAllocatableDTO';
-import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
+import { EditAllocatableDTO } from '../dtos/allocatable/EditAllocatableDTO';
 import { Allocatable } from '../entities/AllocatableEntity';
 import { ItemsAllocatable } from '../entities/ItemsAllocatable';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -30,7 +30,7 @@ export class AllocatableService {
     return await this.allocatableRepository.save(newAllocatable);
   }
 
-  async update(id: number, unit: EditUnitDTO) {
+  async update(id: number, unit: EditAllocatableDTO) {
     return await this.allocatableRepository.update(id, { name: unit.name });
   }
 
