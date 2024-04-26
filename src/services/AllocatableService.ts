@@ -95,7 +95,7 @@ export class AllocatableService {
     return new AllocatableDTO(allocatableSaved, itemsOnAllocatable);
   }
 
-  async getOne(user: number) {
+  async getOne(user: number): Promise<AllocatableDTO> {
     const entityFound = await this.allocatableRepository.findOneBy({
       id: user,
     });
@@ -107,11 +107,18 @@ export class AllocatableService {
         HttpStatus.NOT_FOUND,
       );
 
-    return entityFound;
+    const itemsOnAllocatable =
+      await this.itemsAllocatableRepository.findOneOrFail({
+        where: { id: entityFound.itemsAllocatableId },
+      });
+
+    return new AllocatableDTO(entityFound, itemsOnAllocatable);
   }
 
-  async getAll(entities?: number[]) {
-    const allEntities = await this.allocatableRepository.find();
+  async getAll(entities?: number[]): Promise<Allocatable[]> {
+    const allEntities = await this.allocatableRepository.find({
+      relations: ['items'],
+    });
 
     if (!allEntities.length)
       throw HttpExceptionDTO.warn(
