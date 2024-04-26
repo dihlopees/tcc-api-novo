@@ -37,7 +37,7 @@ export class AllocatableController {
     return new ResponseDTO(
       HttpStatus.OK,
       'Atualizado com sucesso',
-      entityEdited.affected,
+      entityEdited,
     );
   }
 

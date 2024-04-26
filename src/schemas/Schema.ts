@@ -97,11 +97,11 @@ export class Schema {
   }).min(1);
 
   static itemsAllocatable = Joi.object({
-    seatsQuantity: Joi.number().optional(),
-    multimediaQuantity: Joi.number().optional(),
-    outletsQuantity: Joi.number().optional(),
-    airConditionersQuantity: Joi.number().optional(),
-    allowsTransmission: Joi.boolean().optional(),
+    seatsQuantity: Joi.number().allow(null).optional(),
+    multimediaQuantity: Joi.number().allow(null).optional(),
+    outletsQuantity: Joi.number().allow(null).optional(),
+    airConditionersQuantity: Joi.number().allow(null).optional(),
+    allowsTransmission: Joi.boolean().allow(null).optional(),
   });
   //   static search = Joi.custom((value) => {
   //     const { object, result } = JoiCustomValidation.objectValidation(value, this.searchParams)

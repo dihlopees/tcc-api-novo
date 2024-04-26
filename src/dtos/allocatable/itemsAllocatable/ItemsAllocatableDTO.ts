@@ -1,7 +1,7 @@
 export class ItemsAllocatable {
-  seatsQuantity?: number;
-  multimediaQuantity?: number;
-  outletsQuantity?: number;
-  airConditionersQuantity?: number;
-  allowsTransmission?: boolean;
+  seatsQuantity?: number | null;
+  multimediaQuantity?: number | null;
+  outletsQuantity?: number | null;
+  airConditionersQuantity?: number | null;
+  allowsTransmission?: boolean | null;
 }
