@@ -19,4 +19,10 @@ export class ItemsAllocatable {
 
   @Column({ name: 'allows_transmission', nullable: true })
   allowsTransmission: boolean;
+
+  @Column({ name: 'plate', nullable: true })
+  plate: string;
+
+  @Column({ name: 'color', nullable: true })
+  color: string;
 }

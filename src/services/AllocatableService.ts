@@ -25,6 +25,8 @@ export class AllocatableService {
       airConditionersQuantity:
         entity.items?.airConditionersQuantity ?? undefined,
       allowsTransmission: entity.items?.allowsTransmission ?? undefined,
+      color: entity.items?.color ?? undefined,
+      plate: entity.items?.plate ?? undefined,
     };
 
     const itemsCreated = await this.itemsAllocatableRepository.save(newItems);

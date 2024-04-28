@@ -4,4 +4,6 @@ export class ItemsAllocatable {
   outletsQuantity?: number | null;
   airConditionersQuantity?: number | null;
   allowsTransmission?: boolean | null;
+  plate?: string | null;
+  color?: string | null;
 }
