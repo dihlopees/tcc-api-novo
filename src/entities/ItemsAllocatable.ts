@@ -25,4 +25,7 @@ export class ItemsAllocatable {
 
   @Column({ name: 'color', nullable: true })
   color: string;
+
+  @Column({ name: 'brand', nullable: true })
+  brand: string;
 }

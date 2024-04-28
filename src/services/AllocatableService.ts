@@ -27,6 +27,7 @@ export class AllocatableService {
       allowsTransmission: entity.items?.allowsTransmission ?? undefined,
       color: entity.items?.color ?? undefined,
       plate: entity.items?.plate ?? undefined,
+      brand: entity.items?.brand ?? undefined,
     };
 
     const itemsCreated = await this.itemsAllocatableRepository.save(newItems);

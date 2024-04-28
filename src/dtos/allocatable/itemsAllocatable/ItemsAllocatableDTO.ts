@@ -6,4 +6,5 @@ export class ItemsAllocatable {
   allowsTransmission?: boolean | null;
   plate?: string | null;
   color?: string | null;
+  brand?: string | null;
 }
