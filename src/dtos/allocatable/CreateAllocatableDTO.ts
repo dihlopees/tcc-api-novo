@@ -14,5 +14,5 @@ export class CreateAllocatableDTO {
   blockId: number;
 
   @JoiSchema(Schema.itemsAllocatable.optional())
-  items: ItemsAllocatable;
+  items?: ItemsAllocatable;
 }

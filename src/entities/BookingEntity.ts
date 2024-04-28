@@ -10,6 +10,8 @@ import { Allocatable } from './AllocatableEntity';
 import { Course } from './CourseEntity';
 import { UserEntity } from './UserEntity';
 
+//filtrar agendamentos por horario
+
 @Entity()
 export class Booking {
   @PrimaryGeneratedColumn()

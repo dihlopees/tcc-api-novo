@@ -19,12 +19,12 @@ export class AllocatableService {
 
   async create(entity: CreateAllocatableDTO): Promise<Allocatable> {
     const newItems = {
-      seatsQuantity: entity.items.seatsQuantity ?? undefined,
-      multimediaQuantity: entity.items.multimediaQuantity ?? undefined,
-      outletsQuantity: entity.items.outletsQuantity ?? undefined,
+      seatsQuantity: entity.items?.seatsQuantity ?? undefined,
+      multimediaQuantity: entity.items?.multimediaQuantity ?? undefined,
+      outletsQuantity: entity.items?.outletsQuantity ?? undefined,
       airConditionersQuantity:
-        entity.items.airConditionersQuantity ?? undefined,
-      allowsTransmission: entity.items.allowsTransmission ?? undefined,
+        entity.items?.airConditionersQuantity ?? undefined,
+      allowsTransmission: entity.items?.allowsTransmission ?? undefined,
     };
 
     const itemsCreated = await this.itemsAllocatableRepository.save(newItems);
