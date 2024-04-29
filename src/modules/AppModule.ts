@@ -5,6 +5,7 @@ import { AllocatableTypeModule } from './AllocatableTypeModule';
 import { AuthenticationModule } from './AuthenticationModule';
 import { BaseModule } from './BaseModule';
 import { BlockModule } from './BlockModule';
+import { BookingModule } from './BookingModule';
 import { CourseModule } from './CourseModule';
 import { ExtrasModule } from './ExtrasModule';
 import { UnitModule } from './UnitModule';
@@ -22,6 +23,7 @@ import { UserModule } from './UserModule';
     BlockModule,
     AllocatableTypeModule,
     AllocatableModule,
+    BookingModule,
   ],
   controllers: [],
   providers: [],

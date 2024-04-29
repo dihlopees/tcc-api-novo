@@ -37,11 +37,6 @@ export class Schema {
   static page = Joi.number().min(0).default(0);
   static pageSize = Joi.number().min(1).max(100).default(20);
 
-  static keepLoggedIn = Joi.boolean();
-  static companyId = Joi.number().min(1);
-
-  static otpToken = Joi.string().min(1);
-
   static email = Joi.string()
     .pattern(
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
@@ -58,10 +53,6 @@ export class Schema {
   static id = Joi.number().min(1);
   static availableQuantity = Joi.number().min(1);
   static permissions = Joi.array().unique().items(Joi.string());
-  static authorizedCompanies = Joi.array().unique().items(Joi.number());
-  static authorizedClients = Joi.array()
-    .unique()
-    .items(Joi.number().optional());
 
   static ids = Joi.array().items(this.id).min(1);
 
@@ -103,6 +94,13 @@ export class Schema {
     airConditionersQuantity: Joi.number().allow(null).optional(),
     allowsTransmission: Joi.boolean().allow(null).optional(),
   });
+
+  static startTime = Joi.string().required();
+  static endTime = Joi.string().required();
+  static note = Joi.string().optional();
+  static bookedForUserId = Joi.number().optional();
+  static reservationColor = Joi.string().required();
+
   //   static search = Joi.custom((value) => {
   //     const { object, result } = JoiCustomValidation.objectValidation(value, this.searchParams)
   //     if (result?.error) throw Error(result.error.details[0].message)

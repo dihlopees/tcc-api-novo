@@ -2,45 +2,56 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Allocatable } from './AllocatableEntity';
 import { Course } from './CourseEntity';
-import { UserEntity } from './UserEntity';
 
 //filtrar agendamentos por horario
 
-@Entity()
+@Entity('booking')
 export class Booking {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Course, { nullable: true })
-  course: Course;
+  @Column({ name: 'start_time' })
+  startTime: string;
 
-  @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  @Column({ name: 'end_time' })
+  endTime: string;
 
-  @ManyToOne(() => Allocatable)
-  allocatable: Allocatable;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @Column()
-  start_time: string;
-
-  @Column()
-  end_time: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @Column({ nullable: true })
   note: string;
 
-  @Column({ nullable: true })
-  booked_for_user_id: number;
+  @Column({ name: 'booked_for_user_id', nullable: true })
+  bookedForUserId: number;
+
+  @Column({ name: 'reservation_color', nullable: true })
+  reservationColor: string;
+
+  @Column({ name: 'course_id', nullable: true })
+  courseId: number;
+
+  @Column({ name: 'allocatable_id', nullable: true })
+  allocatableId: number;
+
+  @ManyToOne(() => Course, { nullable: true })
+  @JoinColumn({ name: 'course_id' })
+  course: Course;
+
+  // @ManyToOne(() => UserEntity)
+  // user: UserEntity;
+
+  @ManyToOne(() => Allocatable)
+  @JoinColumn({ name: 'allocatable_id' })
+  allocatable: Allocatable;
 }
