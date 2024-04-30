@@ -97,8 +97,8 @@ export class Schema {
 
   static startTime = Joi.string().required();
   static endTime = Joi.string().required();
-  static note = Joi.string().optional();
-  static bookedForUserId = Joi.number().optional();
+  static note = Joi.string().allow(null).optional();
+  static bookedForUserId = Joi.number().allow(null).optional();
   static reservationColor = Joi.string().required();
 
   //   static search = Joi.custom((value) => {

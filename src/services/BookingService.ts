@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
+import { EditBookingDTO } from '../dtos/booking/CreateBookingDTO copy';
 import { Booking } from '../entities/BookingEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
@@ -12,17 +13,37 @@ export class BookingService {
     private readonly bookingRepository: Repository<Booking>,
   ) {}
 
-  async create(unit: CreateBookingDTO): Promise<Booking> {
-    return await this.bookingRepository.save(unit);
+  async create(booking: CreateBookingDTO): Promise<Booking> {
+    return await this.bookingRepository.save(booking);
   }
 
-  async update(id: number, unit: any) {
-    // return await this.unitRepository.update(id, { name: unit.name });
-  }
-
-  async getOne(user: number) {
+  async update(id: number, booking: EditBookingDTO) {
     const entityFound = await this.bookingRepository.findOneBy({
-      id: user,
+      id: id,
+    });
+
+    if (!entityFound)
+      throw HttpExceptionDTO.warn(
+        `Not found`,
+        'Não encontrada',
+        HttpStatus.NOT_FOUND,
+      );
+
+    const newBooking = {
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      courseId: booking.courseId,
+      bookedForUserId: booking.bookedForUserId,
+      reservationColor: booking.reservationColor,
+      note: booking.note,
+    };
+
+    return await this.bookingRepository.update(id, newBooking);
+  }
+
+  async getOne(bookingId: number) {
+    const entityFound = await this.bookingRepository.findOneBy({
+      id: bookingId,
     });
 
     if (!entityFound)
@@ -52,6 +73,17 @@ export class BookingService {
     entityToDelete: number,
     loggedUser: number,
   ): Promise<number | null | undefined> {
+    const entityFound = await this.bookingRepository.findOneBy({
+      id: entityToDelete,
+    });
+
+    if (!entityFound)
+      throw HttpExceptionDTO.warn(
+        `Not found`,
+        'Não encontrada',
+        HttpStatus.NOT_FOUND,
+      );
+
     const deletedEntities = await this.bookingRepository.delete(entityToDelete);
     return deletedEntities.affected;
   }

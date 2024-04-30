@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
-import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
+import { EditBookingDTO } from '../dtos/booking/CreateBookingDTO copy';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { BookingService } from '../services/BookingService';
@@ -26,9 +26,16 @@ export class BookingController {
   }
 
   @Patch('/:id')
-  async edit(@Param() id: number, @Body(JoiPipe) entityToUpdate: EditUnitDTO) {
+  async edit(
+    @Param('id') id: number,
+    @Body(JoiPipe) entityToUpdate: EditBookingDTO,
+  ) {
     const entityEdited = await this.bookingService.update(id, entityToUpdate);
-    return new ResponseDTO(HttpStatus.OK, 'Atualizado com sucesso', true);
+    return new ResponseDTO(
+      HttpStatus.OK,
+      'Atualizado com sucesso',
+      entityEdited.affected,
+    );
   }
 
   @Get('/all')
@@ -45,16 +52,12 @@ export class BookingController {
   }
 
   @Delete('/:id')
-  async delete(@Param(JoiPipe) deleteEntity: number) {
+  async delete(@Param('id') deleteEntity: number) {
     try {
       await this.bookingService.delete(deleteEntity, 11);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
-      throw HttpExceptionDTO.error(
-        `Users not deleted`,
-        err,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw HttpExceptionDTO.error(`Not deleted`, err, HttpStatus.BAD_REQUEST);
     }
   }
 }
