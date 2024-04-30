@@ -27,7 +27,7 @@ export class AllocatableController {
 
   @Patch('/:id')
   async edit(
-    @Param() id: number,
+    @Param('id') id: number,
     @Body(JoiPipe) entityToUpdate: EditAllocatableDTO,
   ) {
     const entityEdited = await this.allocatableService.update(

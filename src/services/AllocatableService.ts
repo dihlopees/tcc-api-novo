@@ -65,15 +65,17 @@ export class AllocatableService {
         HttpStatus.NOT_FOUND,
       );
 
-    //ERRRADOO FUNÇÃO DE EDITAR ITEM
     const newItems = {
-      seatsQuantity: entity.items.seatsQuantity ?? undefined,
-      multimediaQuantity: entity.items.multimediaQuantity ?? undefined,
-      outletsQuantity: entity.items.outletsQuantity ?? undefined,
-      airConditionersQuantity:
-        entity.items.airConditionersQuantity ?? undefined,
-      allowsTransmission: entity.items.allowsTransmission ?? undefined,
+      seatsQuantity: entity.items?.seatsQuantity,
+      multimediaQuantity: entity.items?.multimediaQuantity,
+      outletsQuantity: entity.items?.outletsQuantity,
+      airConditionersQuantity: entity.items?.airConditionersQuantity,
+      allowsTransmission: entity.items?.allowsTransmission,
+      color: entity.items?.color,
+      plate: entity.items?.plate,
+      brand: entity.items?.brand,
     };
+
     if (entity.items) {
       await this.itemsAllocatableRepository.update(
         savedEntity.itemsAllocatableId,

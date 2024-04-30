@@ -1,10 +1,10 @@
 export class ItemsAllocatable {
-  seatsQuantity?: number | null;
-  multimediaQuantity?: number | null;
-  outletsQuantity?: number | null;
-  airConditionersQuantity?: number | null;
-  allowsTransmission?: boolean | null;
-  plate?: string | null;
-  color?: string | null;
-  brand?: string | null;
+  seatsQuantity?: number;
+  multimediaQuantity?: number;
+  outletsQuantity?: number;
+  airConditionersQuantity?: number;
+  allowsTransmission?: boolean;
+  plate?: string;
+  color?: string;
+  brand?: string;
 }
