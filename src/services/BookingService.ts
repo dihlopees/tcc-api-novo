@@ -29,9 +29,12 @@ export class BookingService {
     return await this.bookingRepository.save(newBooking);
   }
 
-  async update(id: number, booking: EditBookingDTO) {
-    const entityFound = await this.bookingRepository.findOneBy({
-      id: id,
+  async update(id: number, booking: EditBookingDTO, user: UserDTO) {
+    const entityFound = await this.bookingRepository.findOne({
+      where: {
+        id: id,
+        userId: user.id,
+      },
     });
 
     if (!entityFound)
@@ -53,9 +56,12 @@ export class BookingService {
     return await this.bookingRepository.update(id, newBooking);
   }
 
-  async getOne(bookingId: number) {
-    const entityFound = await this.bookingRepository.findOneBy({
-      id: bookingId,
+  async getOne(bookingId: number, user: UserDTO) {
+    const entityFound = await this.bookingRepository.findOne({
+      where: {
+        id: bookingId,
+        userId: user.id,
+      },
     });
 
     if (!entityFound)
@@ -91,10 +97,13 @@ export class BookingService {
 
   async delete(
     entityToDelete: number,
-    loggedUser: number,
+    loggedUser: UserDTO,
   ): Promise<number | null | undefined> {
-    const entityFound = await this.bookingRepository.findOneBy({
-      id: entityToDelete,
+    const entityFound = await this.bookingRepository.findOne({
+      where: {
+        id: entityToDelete,
+        userId: loggedUser.id,
+      },
     });
 
     if (!entityFound)

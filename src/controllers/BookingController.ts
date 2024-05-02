@@ -39,8 +39,13 @@ export class BookingController {
   async edit(
     @Param('id') id: number,
     @Body(JoiPipe) entityToUpdate: EditBookingDTO,
+    @Req() request: ReqUserDTO,
   ) {
-    const entityEdited = await this.bookingService.update(id, entityToUpdate);
+    const entityEdited = await this.bookingService.update(
+      id,
+      entityToUpdate,
+      request.user,
+    );
     return new ResponseDTO(
       HttpStatus.OK,
       'Atualizado com sucesso',
@@ -63,15 +68,18 @@ export class BookingController {
   }
 
   @Get('/one/:id')
-  async getOne(@Param('id') getEntity: number) {
-    const entityFound = await this.bookingService.getOne(getEntity);
+  async getOne(@Param('id') getEntity: number, @Req() request: ReqUserDTO) {
+    const entityFound = await this.bookingService.getOne(
+      getEntity,
+      request.user,
+    );
     return new ResponseDTO(HttpStatus.OK, 'Encontrado', entityFound);
   }
 
   @Delete('/:id')
-  async delete(@Param('id') deleteEntity: number) {
+  async delete(@Param('id') deleteEntity: number, @Req() request: ReqUserDTO) {
     try {
-      await this.bookingService.delete(deleteEntity, 11);
+      await this.bookingService.delete(deleteEntity, request.user);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(`Not deleted`, err, HttpStatus.BAD_REQUEST);
