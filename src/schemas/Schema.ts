@@ -1,38 +1,10 @@
 import * as Joi from 'joi';
 
-export const UserManyToManyRelationsValues = [
-  'permissions',
-  'authorizedClients',
-  'authorizedCompanies',
-] as const;
-export const UserRelationsValues = [
-  ...UserManyToManyRelationsValues,
-  'company',
-  'roleEntity',
-] as const;
-export type UserRelationsType = (typeof UserRelationsValues)[number];
-
 export type RoleType = 'operator' | 'admin' | 'manager';
 
 export type OrderingTypes = 'ASC' | 'DESC';
 export const orderByValues = ['ASC', 'DESC'];
 
-export type FilterType = {
-  ids?: Array<number>;
-  companyIds?: Array<number>;
-};
-
-export type OrderByType = {
-  ids?: OrderingTypes;
-  roles?: OrderingTypes;
-  companyIds?: OrderingTypes;
-  names?: OrderingTypes;
-};
-export type SearchType = {
-  name?: string;
-  email?: string;
-  companyName?: string;
-};
 export class Schema {
   static page = Joi.number().min(0).default(0);
   static pageSize = Joi.number().min(1).max(100).default(20);
@@ -100,28 +72,4 @@ export class Schema {
   static note = Joi.string().allow(null).optional();
   static bookedForUserId = Joi.number().allow(null).optional();
   static reservationColor = Joi.string().required();
-
-  //   static search = Joi.custom((value) => {
-  //     const { object, result } = JoiCustomValidation.objectValidation(value, this.searchParams)
-  //     if (result?.error) throw Error(result.error.details[0].message)
-  //     return object
-  //   })
-
-  //   static orderBy = Joi.custom((value) => {
-  //     const { object, result } = JoiCustomValidation.objectValidation(value, this.orderParams)
-  //     if (result?.error) throw Error(result.error.details[0].message)
-  //     return object
-  //   })
-
-  //   static filter = Joi.custom((value) => {
-  //     const { object, result } = JoiCustomValidation.objectValidation(value, this.filterParams)
-  //     if (result?.error) throw Error(result.error.details[0].message)
-  //     return object
-  //   })
-
-  //   static includes = Joi.custom((value) => {
-  //     const { includes, result } = JoiCustomValidation.includesValidation(value, [...UserRelationsValues])
-  //     if (result?.error) throw Error(result.error.details[0].message)
-  //     return includes
-  //   })
 }
