@@ -7,11 +7,15 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
+import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
-import { EditBookingDTO } from '../dtos/booking/CreateBookingDTO copy';
+import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { BookingService } from '../services/BookingService';
 
@@ -20,8 +24,14 @@ export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
   @Post()
-  async create(@Body(JoiPipe) booking: CreateBookingDTO) {
-    const entityCreated = await this.bookingService.create(booking);
+  async create(
+    @Body(JoiPipe) booking: CreateBookingDTO,
+    @Req() request: ReqUserDTO,
+  ) {
+    const entityCreated = await this.bookingService.create(
+      booking,
+      request.user,
+    );
     return new ResponseDTO(HttpStatus.OK, 'Criado', entityCreated);
   }
 
@@ -39,8 +49,15 @@ export class BookingController {
   }
 
   @Get('/all')
-  async getAll() {
-    const allEntities = await this.bookingService.getAll();
+  async getAll(
+    @Query() bookingFilter: BookingFilterDTO,
+    @Req() request: ReqUserDTO,
+  ) {
+    console.log(request.user);
+    const allEntities = await this.bookingService.getAll(
+      request.user,
+      bookingFilter,
+    );
 
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
   }
