@@ -1,8 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
+import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
-import { EditBookingDTO } from '../dtos/booking/CreateBookingDTO copy';
+import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { Booking } from '../entities/BookingEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
@@ -13,13 +15,26 @@ export class BookingService {
     private readonly bookingRepository: Repository<Booking>,
   ) {}
 
-  async create(booking: CreateBookingDTO): Promise<Booking> {
-    return await this.bookingRepository.save(booking);
+  async create(booking: CreateBookingDTO, user: UserDTO): Promise<Booking> {
+    const newBooking = {
+      userId: user.id,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      reservationColor: booking.reservationColor,
+      allocatableId: booking.allocatableId,
+      note: booking.note,
+      bookedForUserId: booking.bookedForUserId,
+      courseId: booking.courseId,
+    };
+    return await this.bookingRepository.save(newBooking);
   }
 
-  async update(id: number, booking: EditBookingDTO) {
-    const entityFound = await this.bookingRepository.findOneBy({
-      id: id,
+  async update(id: number, booking: EditBookingDTO, user: UserDTO) {
+    const entityFound = await this.bookingRepository.findOne({
+      where: {
+        id: id,
+        userId: user.id,
+      },
     });
 
     if (!entityFound)
@@ -41,9 +56,12 @@ export class BookingService {
     return await this.bookingRepository.update(id, newBooking);
   }
 
-  async getOne(bookingId: number) {
-    const entityFound = await this.bookingRepository.findOneBy({
-      id: bookingId,
+  async getOne(bookingId: number, user: UserDTO) {
+    const entityFound = await this.bookingRepository.findOne({
+      where: {
+        id: bookingId,
+        userId: user.id,
+      },
     });
 
     if (!entityFound)
@@ -56,8 +74,16 @@ export class BookingService {
     return entityFound;
   }
 
-  async getAll(entities?: number[]) {
-    const allEntities = await this.bookingRepository.find();
+  async getAll(user: UserDTO, filters?: BookingFilterDTO) {
+    const where: FindManyOptions<Booking>['where'] = {};
+
+    where.userId = user.id;
+    if (filters) {
+      if (filters.endTime) where.endTime = filters.endTime;
+      if (filters.startTime) where.startTime = filters.startTime;
+    }
+
+    const allEntities = await this.bookingRepository.find({ where });
 
     if (!allEntities.length)
       throw HttpExceptionDTO.warn(
@@ -71,10 +97,13 @@ export class BookingService {
 
   async delete(
     entityToDelete: number,
-    loggedUser: number,
+    loggedUser: UserDTO,
   ): Promise<number | null | undefined> {
-    const entityFound = await this.bookingRepository.findOneBy({
-      id: entityToDelete,
+    const entityFound = await this.bookingRepository.findOne({
+      where: {
+        id: entityToDelete,
+        userId: loggedUser.id,
+      },
     });
 
     if (!entityFound)

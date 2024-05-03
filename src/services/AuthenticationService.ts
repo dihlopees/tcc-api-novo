@@ -6,6 +6,7 @@ import { LoggedUserDTO } from 'src/dtos/login/LoggedUser';
 import { HttpExceptionDTO } from 'src/helpers/HttpExceptionDTO';
 import { Repository } from 'typeorm';
 import { LoginReponseDTO } from '../dtos/login/LoginResponseDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { UserEntity } from '../entities/UserEntity';
 
 @Injectable()
@@ -17,8 +18,9 @@ export class AuthenticationService {
   ) {}
 
   async login(userDTO: LoggedUserDTO): Promise<LoginReponseDTO> {
-    const user = await this.usersRepository.findOneBy({
-      email: userDTO.email,
+    const user = await this.usersRepository.findOne({
+      where: { email: userDTO.email },
+      relations: ['role'],
     });
 
     if (!user)
@@ -37,8 +39,8 @@ export class AuthenticationService {
         HttpStatus.FORBIDDEN,
       );
     }
-
-    const tokenPayload = { payload: user };
+    const payloadUser = new UserDTO(user, user.role.role);
+    const tokenPayload = { payload: payloadUser };
 
     const jwtToken = await this.jwtService.signAsync(tokenPayload, {
       expiresIn: '7d',
