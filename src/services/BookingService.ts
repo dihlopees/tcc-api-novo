@@ -85,13 +85,6 @@ export class BookingService {
 
     const allEntities = await this.bookingRepository.find({ where });
 
-    if (!allEntities.length)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrados',
-        HttpStatus.NOT_FOUND,
-      );
-
     return allEntities;
   }
 

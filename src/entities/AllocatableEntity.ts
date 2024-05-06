@@ -20,6 +20,9 @@ export class Allocatable {
   @Column({ name: 'type_id' })
   typeId: number;
 
+  @Column({ name: 'is_disabled' })
+  isDisabled: boolean;
+
   @Column({ name: 'block_id' })
   blockId: number;
 

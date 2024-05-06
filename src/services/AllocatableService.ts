@@ -88,6 +88,7 @@ export class AllocatableService {
       name: entity.name,
       typeId: entity.typeId,
       blockId: entity.blockId,
+      isDisabled: entity.isDisabled,
     };
     const allocatableSaved =
       await this.allocatableRepository.save(newAllocatable);

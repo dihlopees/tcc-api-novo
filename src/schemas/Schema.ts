@@ -28,6 +28,8 @@ export class Schema {
 
   static ids = Joi.array().items(this.id).min(1);
 
+  static isDisabled = Joi.boolean().optional();
+
   static filterParams = Joi.object({
     ids: Joi.array().items(this.id).min(1).unique().optional(),
     roles: Joi.array().items(Joi.string()).min(1).unique().optional(),

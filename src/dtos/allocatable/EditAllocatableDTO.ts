@@ -15,4 +15,7 @@ export class EditAllocatableDTO {
 
   @JoiSchema(Schema.itemsAllocatable.optional())
   items: ItemsAllocatable;
+
+  @JoiSchema(Schema.isDisabled.optional())
+  isDisabled: boolean;
 }
