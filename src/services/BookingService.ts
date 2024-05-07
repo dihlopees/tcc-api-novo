@@ -15,7 +15,7 @@ export class BookingService {
     private readonly bookingRepository: Repository<Booking>,
   ) {}
 
-  async create(booking: CreateBookingDTO, user: UserDTO): Promise<Booking> {
+  async create(booking: CreateBookingDTO, user: UserDTO) {
     const newBooking = {
       userId: user.id,
       startTime: booking.startTime,
@@ -26,7 +26,11 @@ export class BookingService {
       bookedForUserId: booking.bookedForUserId,
       courseId: booking.courseId,
     };
-    return await this.bookingRepository.save(newBooking);
+    const savedReservation = await this.bookingRepository.save(newBooking);
+
+    if (booking.extras) {
+      // const revervationHasExtras =
+    }
   }
 
   async update(id: number, booking: EditBookingDTO, user: UserDTO) {

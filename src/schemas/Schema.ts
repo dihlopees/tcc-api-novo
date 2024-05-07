@@ -74,4 +74,11 @@ export class Schema {
   static note = Joi.string().allow(null).optional();
   static bookedForUserId = Joi.number().allow(null).optional();
   static reservationColor = Joi.string().required();
+
+  static extras = Joi.object({
+    id: Joi.number().required(),
+    quantity: Joi.number().required(),
+  });
+
+  static quantity = Joi.number().required();
 }
