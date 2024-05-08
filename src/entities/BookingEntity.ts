@@ -26,6 +26,12 @@ export class Booking {
   @Column({ name: 'end_time' })
   endTime: string;
 
+  @Column({ name: 'start_date' })
+  startDate: string;
+
+  @Column({ name: 'end_date' })
+  endDate: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -38,21 +44,18 @@ export class Booking {
   @Column({ name: 'booked_for_user_id', nullable: true })
   bookedForUserId: number;
 
-  @Column({ name: 'reservation_color', nullable: true })
+  @Column({ name: 'reservation_color' })
   reservationColor: string;
 
   @Column({ name: 'course_id', nullable: true })
   courseId: number;
 
-  @Column({ name: 'allocatable_id', nullable: true })
+  @Column({ name: 'allocatable_id' })
   allocatableId: number;
 
   @ManyToOne(() => Course, { nullable: true })
   @JoinColumn({ name: 'course_id' })
   course: Course;
-
-  // @ManyToOne(() => UserEntity)
-  // user: UserEntity;
 
   @ManyToOne(() => Allocatable)
   @JoinColumn({ name: 'allocatable_id' })

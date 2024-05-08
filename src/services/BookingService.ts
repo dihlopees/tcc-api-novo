@@ -29,12 +29,30 @@ export class BookingService {
       userId: user.id,
       startTime: booking.startTime,
       endTime: booking.endTime,
+      startDate: booking.startDate,
+      endDate: booking.endDate,
       reservationColor: booking.reservationColor,
       allocatableId: booking.allocatableId,
       note: booking.note,
       bookedForUserId: booking.bookedForUserId,
       courseId: booking.courseId,
     };
+
+    const bookingReservationEntities = await this.bookingRepository.find({
+      where: {
+        allocatableId: booking.allocatableId,
+        startDate: booking.startDate,
+        startTime: booking.startTime,
+      },
+    });
+
+    if (bookingReservationEntities.length)
+      throw HttpExceptionDTO.warn(
+        `Allocatable already has a reservation at this date and time`,
+        'Recurso já está reservado nesse dia e horário',
+        HttpStatus.BAD_REQUEST,
+      );
+
     const savedReservation = await this.bookingRepository.save(newBooking);
 
     if (booking.extras) {
@@ -42,8 +60,6 @@ export class BookingService {
         where: { id: savedReservation.allocatableId },
         relations: ['block'],
       });
-
-      console.log(allocatableEntity);
 
       const allowExtrasOnUnit = await this.extrasRepository.find({
         where: { unitId: allocatableEntity?.block.unitId },
@@ -54,17 +70,16 @@ export class BookingService {
       );
 
       checkExtras.forEach(async (it) => {
-        const a = {
+        const extra = {
           reservationId: savedReservation.id,
           extraId: it.id,
           reservedQuantity: it.quantity,
         };
-        console.log(a);
-        await this.reservationHasExtrasRepository.save(a);
-      });
 
-      // console.log({ booking: booking.extras, checkExtras, allowIds });
+        await this.reservationHasExtrasRepository.save(extra);
+      });
     }
+    return savedReservation;
   }
 
   async update(id: number, booking: EditBookingDTO, user: UserDTO) {
