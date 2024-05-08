@@ -19,8 +19,8 @@ export class ReservationHasExtras {
   @Column({ name: 'extra_id' })
   extraId: number;
 
-  @Column()
-  reserved_quantity: number;
+  @Column({ name: 'reserved_quantity' })
+  reservedQuantity: number;
 
   @ManyToOne(() => Booking)
   @JoinColumn({ name: 'reservation_id' })
