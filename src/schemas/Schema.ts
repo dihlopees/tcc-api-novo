@@ -68,10 +68,18 @@ export class Schema {
     airConditionersQuantity: Joi.number().allow(null).optional(),
     allowsTransmission: Joi.boolean().allow(null).optional(),
   });
+  static itensExtras = Joi.object({
+    id: Joi.number().required(),
+    quantity: Joi.number().required(),
+  });
+
+  static extras = Joi.array().items(this.itensExtras).optional();
 
   static startTime = Joi.string().required();
   static endTime = Joi.string().required();
   static note = Joi.string().allow(null).optional();
   static bookedForUserId = Joi.number().allow(null).optional();
   static reservationColor = Joi.string().required();
+
+  static quantity = Joi.number().required();
 }

@@ -5,7 +5,10 @@ import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
 import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
+import { Allocatable } from '../entities/AllocatableEntity';
 import { Booking } from '../entities/BookingEntity';
+import { Extras } from '../entities/ExtrasEntity';
+import { ReservationHasExtras } from '../entities/ReservationHasExtrasEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
 @Injectable()
@@ -13,9 +16,15 @@ export class BookingService {
   constructor(
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
+    @InjectRepository(Allocatable)
+    private readonly allocatableRepository: Repository<Allocatable>,
+    @InjectRepository(Extras)
+    private readonly extrasRepository: Repository<Extras>,
+    @InjectRepository(ReservationHasExtras)
+    private readonly reservationHasExtrasRepository: Repository<ReservationHasExtras>,
   ) {}
 
-  async create(booking: CreateBookingDTO, user: UserDTO): Promise<Booking> {
+  async create(booking: CreateBookingDTO, user: UserDTO) {
     const newBooking = {
       userId: user.id,
       startTime: booking.startTime,
@@ -26,7 +35,36 @@ export class BookingService {
       bookedForUserId: booking.bookedForUserId,
       courseId: booking.courseId,
     };
-    return await this.bookingRepository.save(newBooking);
+    const savedReservation = await this.bookingRepository.save(newBooking);
+
+    if (booking.extras) {
+      const allocatableEntity = await this.allocatableRepository.findOne({
+        where: { id: savedReservation.allocatableId },
+        relations: ['block'],
+      });
+
+      console.log(allocatableEntity);
+
+      const allowExtrasOnUnit = await this.extrasRepository.find({
+        where: { unitId: allocatableEntity?.block.unitId },
+      });
+      const allowIds = allowExtrasOnUnit.map((it) => it.id);
+      const checkExtras = booking.extras?.filter((it) =>
+        allowIds.includes(it.id),
+      );
+
+      checkExtras.forEach(async (it) => {
+        const a = {
+          reservationId: savedReservation.id,
+          extraId: it.id,
+          reservedQuantity: it.quantity,
+        };
+        console.log(a);
+        await this.reservationHasExtrasRepository.save(a);
+      });
+
+      // console.log({ booking: booking.extras, checkExtras, allowIds });
+    }
   }
 
   async update(id: number, booking: EditBookingDTO, user: UserDTO) {

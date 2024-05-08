@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Block } from './BlockEntity';
 import { ItemsAllocatable } from './ItemsAllocatable';
 
 @Entity('allocatable')
@@ -38,4 +39,8 @@ export class Allocatable {
   @OneToOne(() => ItemsAllocatable)
   @JoinColumn({ name: 'items_allocatable_id' })
   items: ItemsAllocatable;
+
+  @OneToOne(() => Block)
+  @JoinColumn({ name: 'block_id' })
+  block: Block;
 }
