@@ -8,4 +8,10 @@ export class BookingFilterDTO {
 
   @JoiSchema(Schema.endTime.optional())
   endTime: string;
+
+  @JoiSchema(Schema.startDate.optional())
+  startDate: string;
+
+  @JoiSchema(Schema.endDate.optional())
+  endDate: string;
 }

@@ -9,6 +9,12 @@ export class EditBookingDTO {
   @JoiSchema(Schema.endTime.optional())
   endTime: string;
 
+  @JoiSchema(Schema.startDate.optional())
+  startDate: string;
+
+  @JoiSchema(Schema.endDate.optional())
+  endDate: string;
+
   @JoiSchema(Schema.reservationColor.optional())
   reservationColor: string;
 

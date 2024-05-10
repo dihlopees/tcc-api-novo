@@ -38,6 +38,19 @@ export class BookingService {
       courseId: booking.courseId,
     };
 
+    const startDate = new Date(booking.startDate);
+    const endDate = new Date(booking.endDate);
+
+    if (
+      startDate.getDate() !== endDate.getDate() ||
+      startDate.getMonth() !== endDate.getMonth()
+    )
+      throw HttpExceptionDTO.warn(
+        `Start date and end date must be the same`,
+        'Data de início e data de fim devem ser iguais',
+        HttpStatus.BAD_REQUEST,
+      );
+
     const bookingReservationEntities = await this.bookingRepository.find({
       where: {
         allocatableId: booking.allocatableId,
@@ -100,6 +113,8 @@ export class BookingService {
     const newBooking = {
       startTime: booking.startTime,
       endTime: booking.endTime,
+      startDate: booking.startDate,
+      endDate: booking.endDate,
       courseId: booking.courseId,
       bookedForUserId: booking.bookedForUserId,
       reservationColor: booking.reservationColor,
@@ -109,7 +124,7 @@ export class BookingService {
     return await this.bookingRepository.update(id, newBooking);
   }
 
-  async getOne(bookingId: number, user: UserDTO) {
+  async getOne(bookingId: number, user: UserDTO): Promise<Booking> {
     const entityFound = await this.bookingRepository.findOne({
       where: {
         id: bookingId,
@@ -127,18 +142,34 @@ export class BookingService {
     return entityFound;
   }
 
-  async getAll(user: UserDTO, filters?: BookingFilterDTO) {
+  async getAll(
+    user: UserDTO,
+    filters?: BookingFilterDTO,
+  ): Promise<Record<string, Booking[]>> {
     const where: FindManyOptions<Booking>['where'] = {};
 
     where.userId = user.id;
     if (filters) {
       if (filters.endTime) where.endTime = filters.endTime;
       if (filters.startTime) where.startTime = filters.startTime;
+      if (filters.startDate) where.startDate = filters.startDate;
+      if (filters.endDate) where.endDate = filters.endDate;
     }
 
     const allEntities = await this.bookingRepository.find({ where });
 
-    return allEntities;
+    const groupedEntities = allEntities.reduce(
+      (acc, cur) => {
+        if (!acc[cur.startDate]) {
+          acc[cur.startDate] = [];
+        }
+        acc[cur.startDate].push({ ...cur });
+        return acc;
+      },
+      {} as Record<string, Booking[]>,
+    );
+
+    return groupedEntities;
   }
 
   async delete(
