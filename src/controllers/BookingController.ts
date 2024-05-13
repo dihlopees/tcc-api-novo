@@ -58,7 +58,6 @@ export class BookingController {
     @Query() bookingFilter: BookingFilterDTO,
     @Req() request: ReqUserDTO,
   ) {
-    console.log(request.user);
     const allEntities = await this.bookingService.getAll(
       request.user,
       bookingFilter,

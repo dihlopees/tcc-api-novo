@@ -1,9 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { AllocatableDTO } from '../dtos/allocatable/AllocatableDTO';
 import { CreateAllocatableDTO } from '../dtos/allocatable/CreateAllocatableDTO';
 import { EditAllocatableDTO } from '../dtos/allocatable/EditAllocatableDTO';
+import { FilterAllocatableDTO } from '../dtos/allocatable/FilterAllocatableDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { Allocatable } from '../entities/AllocatableEntity';
 import { ItemsAllocatable } from '../entities/ItemsAllocatable';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -121,8 +123,16 @@ export class AllocatableService {
     return new AllocatableDTO(entityFound, itemsOnAllocatable);
   }
 
-  async getAll(entities?: number[]): Promise<Allocatable[]> {
+  async getAll(filter: FilterAllocatableDTO): Promise<Allocatable[]> {
+    const where: FindManyOptions<Allocatable>['where'] = {};
+
+    if (filter.name) where.name = filter.name;
+    if (filter.blockId) where.blockId = filter.blockId;
+    if (filter.typeId) where.typeId = filter.typeId;
+    if (filter.isDisabled) where.isDisabled = filter.isDisabled;
+
     const allEntities = await this.allocatableRepository.find({
+      where,
       relations: ['items'],
     });
 
@@ -138,7 +148,7 @@ export class AllocatableService {
 
   async delete(
     entityToDelete: number,
-    loggedUser: number,
+    user?: UserDTO,
   ): Promise<number | null | undefined> {
     const deletedEntities =
       await this.allocatableRepository.delete(entityToDelete);

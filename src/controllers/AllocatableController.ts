@@ -7,11 +7,15 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateAllocatableDTO } from '../dtos/allocatable/CreateAllocatableDTO';
 import { EditAllocatableDTO } from '../dtos/allocatable/EditAllocatableDTO';
+import { FilterAllocatableDTO } from '../dtos/allocatable/FilterAllocatableDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { AllocatableService } from '../services/AllocatableService';
 
@@ -42,8 +46,8 @@ export class AllocatableController {
   }
 
   @Get('/all')
-  async getAll() {
-    const allEntities = await this.allocatableService.getAll();
+  async getAll(@Query() filter: FilterAllocatableDTO) {
+    const allEntities = await this.allocatableService.getAll(filter);
 
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
   }
@@ -55,9 +59,12 @@ export class AllocatableController {
   }
 
   @Delete('/:id')
-  async delete(@Param(JoiPipe) deleteEntity: number) {
+  async delete(
+    @Param(JoiPipe) deleteEntity: number,
+    @Req() request: ReqUserDTO,
+  ) {
     try {
-      await this.allocatableService.delete(deleteEntity, 11);
+      await this.allocatableService.delete(deleteEntity, request.user);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(
