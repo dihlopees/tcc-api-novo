@@ -130,6 +130,7 @@ export class BookingService {
         id: bookingId,
         userId: user.id,
       },
+      relations: ['allocatable'],
     });
 
     if (!entityFound)
@@ -156,7 +157,10 @@ export class BookingService {
       if (filters.endDate) where.endDate = filters.endDate;
     }
 
-    const allEntities = await this.bookingRepository.find({ where });
+    const allEntities = await this.bookingRepository.find({
+      where,
+      relations: ['allocatable'],
+    });
 
     const groupedEntities = allEntities.reduce(
       (acc, cur) => {
