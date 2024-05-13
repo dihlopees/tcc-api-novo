@@ -180,19 +180,21 @@ export class BookingService {
     entityToDelete: number,
     loggedUser: UserDTO,
   ): Promise<number | null | undefined> {
-    const entityFound = await this.bookingRepository.findOne({
-      where: {
-        id: entityToDelete,
-        userId: loggedUser.id,
-      },
-    });
+    if (loggedUser.role !== 'admin') {
+      const entityFound = await this.bookingRepository.findOne({
+        where: {
+          id: entityToDelete,
+          userId: loggedUser.id,
+        },
+      });
 
-    if (!entityFound)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrada',
-        HttpStatus.NOT_FOUND,
-      );
+      if (!entityFound)
+        throw HttpExceptionDTO.warn(
+          `Not found`,
+          'Não encontrada',
+          HttpStatus.NOT_FOUND,
+        );
+    }
 
     const deletedEntities = await this.bookingRepository.delete(entityToDelete);
     return deletedEntities.affected;

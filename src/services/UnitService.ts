@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUnitDTO } from '../dtos/unit/CreateUnitDTO';
 import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { UnitEntity } from '../entities/UnitEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
@@ -36,7 +37,7 @@ export class UnitService {
     return entityFound;
   }
 
-  async getAll(entities?: number[]) {
+  async getAll() {
     const allEntities = await this.unitRepository.find();
 
     if (!allEntities.length)
@@ -51,8 +52,15 @@ export class UnitService {
 
   async delete(
     entityToDelete: number,
-    loggedUser: number,
+    user: UserDTO,
   ): Promise<number | null | undefined> {
+    if (user.role !== 'admin')
+      throw HttpExceptionDTO.warn(
+        `User not have permission`,
+        'Usuário não tem permissão para deletar recursos',
+        HttpStatus.FORBIDDEN,
+      );
+
     const deletedEntities = await this.unitRepository.delete(entityToDelete);
     return deletedEntities.affected;
   }

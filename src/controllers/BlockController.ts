@@ -7,11 +7,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateBlockDTO } from '../dtos/block/CreateBlockDTO';
 import { EditBlockDTO } from '../dtos/block/EditBlockDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { BlockService } from '../services/BlockService';
 
@@ -36,8 +39,8 @@ export class BlockController {
   }
 
   @Get('/all')
-  async getAll() {
-    const allEntities = await this.blockService.getAll();
+  async getAll(@Query() filter: { unitId: number }) {
+    const allEntities = await this.blockService.getAll(filter);
 
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
   }
@@ -49,9 +52,12 @@ export class BlockController {
   }
 
   @Delete('/:id')
-  async delete(@Param(JoiPipe) deleteEntity: number) {
+  async delete(
+    @Param(JoiPipe) deleteEntity: number,
+    @Req() request: ReqUserDTO,
+  ) {
     try {
-      await this.blockService.delete(deleteEntity, 11);
+      await this.blockService.delete(deleteEntity, request.user);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(

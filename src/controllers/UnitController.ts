@@ -7,11 +7,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateUnitDTO } from '../dtos/unit/CreateUnitDTO';
 import { EditUnitDTO } from '../dtos/unit/EditUnitDTO';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { UnitService } from '../services/UnitService';
 
@@ -49,9 +51,12 @@ export class UnitController {
   }
 
   @Delete('/:id')
-  async delete(@Param(JoiPipe) deleteEntity: number) {
+  async delete(
+    @Param(JoiPipe) deleteEntity: number,
+    @Req() request: ReqUserDTO,
+  ) {
     try {
-      await this.unitService.delete(deleteEntity, 11);
+      await this.unitService.delete(deleteEntity, request.user);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(

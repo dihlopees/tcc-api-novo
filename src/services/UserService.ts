@@ -81,7 +81,7 @@ export class UserService {
     return new UserDTO(myUser, myUser.role.role);
   }
 
-  async getAll(users?: number[]): Promise<UserDTO[]> {
+  async getAll(): Promise<UserDTO[]> {
     const allUsers = await this.usersRepository.find({ relations: ['role'] });
 
     if (!allUsers.length)
@@ -96,22 +96,14 @@ export class UserService {
 
   async deleteUsers(
     usersToDelete: number,
-    loggedUser: number,
+    loggedUser: UserDTO,
   ): Promise<number | null | undefined> {
-    //descomentar quando receber token de user logged
-    // const user = await this.usersRepository.findOne({
-    //   where: {
-    //     id: loggedUser,
-    //   },
-    //   relations: ['role'],
-    // });
-
-    // if (!user || user.role.role !== 'admin')
-    //   throw HttpExceptionDTO.warn(
-    //     `User not have permission`,
-    //     'Usuário nãotem permissão para deletar usuários',
-    //     HttpStatus.FORBIDDEN,
-    //   );
+    if (loggedUser.role !== 'admin')
+      throw HttpExceptionDTO.warn(
+        `User not have permission`,
+        'Usuário não tem permissão para deletar usuários',
+        HttpStatus.FORBIDDEN,
+      );
 
     const deletedUsers = await this.usersRepository.delete(usersToDelete);
     return deletedUsers.affected;

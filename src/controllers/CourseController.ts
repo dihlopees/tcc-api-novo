@@ -7,10 +7,12 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateCourseDTO } from '../dtos/course/CreateCourseDTO';
 import { EditCourseDTO } from '../dtos/course/EditCourseDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { CourseService } from '../services/CourseService';
 
@@ -51,8 +53,11 @@ export class CourseController {
   }
 
   @Delete('/:id')
-  async delete(@Param(JoiPipe) deleteEntity: number) {
-    await this.courseService.delete(deleteEntity, 11);
+  async delete(
+    @Param(JoiPipe) deleteEntity: number,
+    @Req() request: ReqUserDTO,
+  ) {
+    await this.courseService.delete(deleteEntity, request.user);
     return new ResponseDTO(HttpStatus.OK, 'Deletado');
   }
 }

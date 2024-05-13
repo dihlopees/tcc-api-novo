@@ -35,6 +35,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       const userEntity = await this.userRepository.findOne({
         where: { id: decoded.payload.id },
+        relations: ['role'],
       });
 
       if (!userEntity)

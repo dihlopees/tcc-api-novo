@@ -26,7 +26,7 @@ export class AllocatableTypeService {
     return entityFound;
   }
 
-  async getAll(entities?: number[]) {
+  async getAll() {
     const allEntities = await this.allocatableTypeRepository.find();
 
     if (!allEntities.length)
@@ -39,10 +39,7 @@ export class AllocatableTypeService {
     return allEntities;
   }
 
-  async delete(
-    entityToDelete: number,
-    loggedUser: number,
-  ): Promise<number | null | undefined> {
+  async delete(entityToDelete: number): Promise<number | null | undefined> {
     const deletedEntities =
       await this.allocatableTypeRepository.delete(entityToDelete);
     return deletedEntities.affected;

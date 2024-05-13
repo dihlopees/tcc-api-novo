@@ -26,7 +26,7 @@ export class AllocatableTypeController {
   @Delete('/:id')
   async delete(@Param(JoiPipe) deleteEntity: number) {
     try {
-      await this.allocatableTypeService.delete(deleteEntity, 11);
+      await this.allocatableTypeService.delete(deleteEntity);
       return new ResponseDTO(HttpStatus.OK, 'Deletado');
     } catch (err) {
       throw HttpExceptionDTO.error(

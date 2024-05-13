@@ -148,8 +148,15 @@ export class AllocatableService {
 
   async delete(
     entityToDelete: number,
-    user?: UserDTO,
+    user: UserDTO,
   ): Promise<number | null | undefined> {
+    if (user.role !== 'admin')
+      throw HttpExceptionDTO.warn(
+        `User not have permission`,
+        'Usuário não tem permissão para deletar recursos',
+        HttpStatus.FORBIDDEN,
+      );
+
     const deletedEntities =
       await this.allocatableRepository.delete(entityToDelete);
     return deletedEntities.affected;

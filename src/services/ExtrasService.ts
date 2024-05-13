@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
 import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { Extras } from '../entities/ExtrasEntity';
 import { UnitEntity } from '../entities/UnitEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -89,8 +90,15 @@ export class ExtrasService {
 
   async delete(
     entityToDelete: number,
-    loggedUser: number,
+    user: UserDTO,
   ): Promise<number | null | undefined> {
+    if (user.role !== 'admin')
+      throw HttpExceptionDTO.warn(
+        `User not have permission`,
+        'Usuário não tem permissão para deletar recursos',
+        HttpStatus.FORBIDDEN,
+      );
+
     const deletedEntities = await this.extrasRepository.delete(entityToDelete);
     return deletedEntities.affected;
   }

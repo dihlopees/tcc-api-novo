@@ -1,8 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreateBlockDTO } from '../dtos/block/CreateBlockDTO';
 import { EditBlockDTO } from '../dtos/block/EditBlockDTO';
+import { UserDTO } from '../dtos/users/UserDTO';
 import { Block } from '../entities/BlockEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
@@ -39,8 +40,12 @@ export class BlockService {
     return entityFound;
   }
 
-  async getAll(entities?: number[]) {
-    const allEntities = await this.blockRepository.find();
+  async getAll(filter: { unitId: number }) {
+    const where: FindManyOptions<Block>['where'] = {};
+
+    if (filter.unitId) where.unitId = filter.unitId;
+
+    const allEntities = await this.blockRepository.find({ where });
 
     if (!allEntities.length)
       throw HttpExceptionDTO.warn(
@@ -54,8 +59,14 @@ export class BlockService {
 
   async delete(
     entityToDelete: number,
-    loggedUser: number,
+    user: UserDTO,
   ): Promise<number | null | undefined> {
+    if (user.role !== 'admin')
+      throw HttpExceptionDTO.warn(
+        `User not have permission`,
+        'Usuário não tem permissão para deletar recursos',
+        HttpStatus.FORBIDDEN,
+      );
     const deletedEntities = await this.blockRepository.delete(entityToDelete);
     return deletedEntities.affected;
   }

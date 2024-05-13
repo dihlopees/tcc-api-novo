@@ -8,10 +8,12 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
 import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { ExtrasService } from '../services/ExtrasService';
 
@@ -52,8 +54,11 @@ export class ExtrasController {
   }
 
   @Delete('/:id')
-  async delete(@Param(JoiPipe) deleteEntity: number) {
-    await this.extrasService.delete(deleteEntity, 11);
+  async delete(
+    @Param(JoiPipe) deleteEntity: number,
+    @Req() request: ReqUserDTO,
+  ) {
+    await this.extrasService.delete(deleteEntity, request.user);
     return new ResponseDTO(HttpStatus.OK, 'Deletado');
   }
 }

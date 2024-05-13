@@ -7,11 +7,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
+import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { UserService } from '../services/UserService';
 
@@ -48,8 +50,8 @@ export class UserController {
   }
 
   @Get('/all')
-  async getAll(@Body(JoiPipe) users?: number[]) {
-    const allUsers = await this.userService.getAll(users);
+  async getAll() {
+    const allUsers = await this.userService.getAll();
 
     return new ResponseDTO(HttpStatus.OK, 'Users retrived', allUsers);
   }
@@ -57,8 +59,9 @@ export class UserController {
   @Delete('/:id')
   async deleteUsers(
     @Param(JoiPipe) users: number,
+    @Req() userLogged: ReqUserDTO,
   ): Promise<ResponseDTO<unknown, unknown>> {
-    const response = await this.userService.deleteUsers(users, 11);
+    const response = await this.userService.deleteUsers(users, userLogged.user);
     return new ResponseDTO(HttpStatus.OK, 'Users deleted', response);
   }
 }
