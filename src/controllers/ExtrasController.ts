@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
@@ -38,8 +39,8 @@ export class ExtrasController {
   }
 
   @Get('/all')
-  async getAll() {
-    const allEntities = await this.extrasService.getAll();
+  async getAll(@Query() filter: { unitId: number }) {
+    const allEntities = await this.extrasService.getAll(filter);
 
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
   }

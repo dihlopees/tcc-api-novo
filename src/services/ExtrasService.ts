@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
 import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
 import { Extras } from '../entities/ExtrasEntity';
@@ -71,8 +71,11 @@ export class ExtrasService {
     return entityFound;
   }
 
-  async getAll(entities?: number[]) {
-    const allEntities = await this.extrasRepository.find();
+  async getAll(filter: { unitId: number }) {
+    const where: FindManyOptions<Extras>['where'] = {};
+
+    if (filter.unitId) where.unitId = filter.unitId;
+    const allEntities = await this.extrasRepository.find({ where });
 
     if (!allEntities.length)
       throw HttpExceptionDTO.warn(
