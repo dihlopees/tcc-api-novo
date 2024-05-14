@@ -55,16 +55,35 @@ export class BookingService {
       where: {
         allocatableId: booking.allocatableId,
         startDate: booking.startDate,
-        startTime: booking.startTime,
       },
     });
+    const [hours, minutes] = booking.startTime.split(':');
 
-    if (bookingReservationEntities.length)
-      throw HttpExceptionDTO.warn(
-        `Allocatable already has a reservation at this date and time`,
-        'Recurso já está reservado nesse dia e horário',
-        HttpStatus.BAD_REQUEST,
-      );
+    startDate.setHours(+hours);
+    startDate.setMinutes(+minutes);
+
+    bookingReservationEntities.forEach((it) => {
+      const startDateSaveOnReservation = new Date(it.startDate);
+      const [hoursSaved, minutesSaved] = it.startTime.split(':');
+      startDateSaveOnReservation.setHours(+hoursSaved);
+      startDateSaveOnReservation.setMinutes(+minutesSaved);
+
+      const finalDateSaveOnReservation = new Date(it.endDate);
+      const [hoursSavedFinal, minutesSavedFinal] = it.endTime.split(':');
+      finalDateSaveOnReservation.setHours(+hoursSavedFinal);
+      finalDateSaveOnReservation.setMinutes(+minutesSavedFinal);
+
+      if (
+        startDate.getTime() <= finalDateSaveOnReservation.getTime() &&
+        startDate.getTime() >= startDateSaveOnReservation.getTime()
+      ) {
+        throw HttpExceptionDTO.warn(
+          `Allocatable already has a reservation at this date and time`,
+          'Recurso já está reservado nesse dia e horário',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
 
     const savedReservation = await this.bookingRepository.save(newBooking);
 
