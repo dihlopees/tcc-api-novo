@@ -172,14 +172,21 @@ export class BookingService {
     if (filters) {
       if (filters.endTime) where.endTime = filters.endTime;
       if (filters.startTime) where.startTime = filters.startTime;
-      if (filters.startDate) where.startDate = filters.startDate;
-      if (filters.endDate) where.endDate = filters.endDate;
+      if (filters.startDate && !filters.endDate)
+        where.startDate = filters.startDate;
     }
 
-    const allEntities = await this.bookingRepository.find({
+    let allEntities = await this.bookingRepository.find({
       where,
       relations: ['allocatable'],
     });
+    if (filters && filters.startDate && filters.endDate) {
+      allEntities = allEntities.filter(
+        (it) =>
+          it.startDate === filters.startDate ||
+          it.startDate === filters.endDate,
+      );
+    }
 
     const groupedEntities = allEntities.reduce(
       (acc, cur) => {
