@@ -180,12 +180,33 @@ export class BookingService {
       where,
       relations: ['allocatable'],
     });
+
     if (filters && filters.startDate && filters.endDate) {
-      allEntities = allEntities.filter(
-        (it) =>
-          it.startDate === filters.startDate ||
-          it.startDate === filters.endDate,
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+
+      const arrayWithDates = allEntities.map((it) => {
+        const savedStartDate = new Date(it.startDate);
+        const savedEndDate = new Date(it.endDate);
+
+        if (savedStartDate >= startDate && savedEndDate <= endDate) return it;
+      });
+
+      const bookings: Booking[] = arrayWithDates.filter(
+        (item): item is Booking => item instanceof Booking,
       );
+
+      const groupedEntities = bookings.reduce(
+        (acc, cur) => {
+          if (!acc[cur.startDate]) {
+            acc[cur.startDate] = [];
+          }
+          acc[cur.startDate].push({ ...cur });
+          return acc;
+        },
+        {} as Record<string, Booking[]>,
+      );
+      if (groupedEntities) return groupedEntities;
     }
 
     const groupedEntities = allEntities.reduce(
