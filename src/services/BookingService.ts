@@ -4,6 +4,7 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
 import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
+import { GetAllBookingDTO } from '../dtos/booking/GetAllBookingDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
 import { Allocatable } from '../entities/AllocatableEntity';
 import { Booking } from '../entities/BookingEntity';
@@ -170,7 +171,7 @@ export class BookingService {
   async getAll(
     user: UserDTO,
     filters?: BookingFilterDTO,
-  ): Promise<Record<string, Booking[]>> {
+  ): Promise<Record<string, GetAllBookingDTO[]>> {
     const where: FindManyOptions<Booking>['where'] = {};
 
     where.userId = user.id;
@@ -179,11 +180,12 @@ export class BookingService {
       if (filters.startTime) where.startTime = filters.startTime;
       if (filters.startDate && !filters.endDate)
         where.startDate = filters.startDate;
+      if (filters.allocatableId) where.allocatableId = filters.allocatableId;
     }
 
     let allEntities = await this.bookingRepository.find({
       where,
-      relations: ['allocatable'],
+      relations: ['allocatable.resourseType'],
     });
 
     if (filters && filters.startDate && filters.endDate) {
@@ -206,10 +208,15 @@ export class BookingService {
           if (!acc[cur.startDate]) {
             acc[cur.startDate] = [];
           }
-          acc[cur.startDate].push({ ...cur });
+          const bookingFormated = new GetAllBookingDTO(
+            cur,
+            cur.allocatable.resourseType,
+          );
+
+          acc[cur.startDate].push({ ...bookingFormated });
           return acc;
         },
-        {} as Record<string, Booking[]>,
+        {} as Record<string, GetAllBookingDTO[]>,
       );
       if (groupedEntities) return groupedEntities;
     }
@@ -219,10 +226,14 @@ export class BookingService {
         if (!acc[cur.startDate]) {
           acc[cur.startDate] = [];
         }
-        acc[cur.startDate].push({ ...cur });
+        const bookingFormated = new GetAllBookingDTO(
+          cur,
+          cur.allocatable.resourseType,
+        );
+        acc[cur.startDate].push({ ...bookingFormated });
         return acc;
       },
-      {} as Record<string, Booking[]>,
+      {} as Record<string, GetAllBookingDTO[]>,
     );
 
     return groupedEntities;

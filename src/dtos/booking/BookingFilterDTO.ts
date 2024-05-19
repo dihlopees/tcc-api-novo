@@ -14,4 +14,7 @@ export class BookingFilterDTO {
 
   @JoiSchema(Schema.endDate.optional())
   endDate: string;
+
+  @JoiSchema(Schema.id.optional())
+  allocatableId: number;
 }
