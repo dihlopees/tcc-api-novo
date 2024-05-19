@@ -66,6 +66,19 @@ export class BookingController {
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
   }
 
+  @Get('/times')
+  async getTimes(
+    @Query() bookingFilter: BookingFilterDTO,
+    @Req() request: ReqUserDTO,
+  ) {
+    const allEntities = await this.bookingService.getTimes(
+      request.user,
+      bookingFilter,
+    );
+
+    return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
+  }
+
   @Get('/one/:id')
   async getOne(@Param('id') getEntity: number, @Req() request: ReqUserDTO) {
     const entityFound = await this.bookingService.getOne(

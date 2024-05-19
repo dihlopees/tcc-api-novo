@@ -5,6 +5,7 @@ import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
 import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
 import { GetAllBookingDTO } from '../dtos/booking/GetAllBookingDTO';
+import { GetTimesUnavailableDTO } from '../dtos/booking/GetTimesUnavailableDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
 import { Allocatable } from '../entities/AllocatableEntity';
 import { Booking } from '../entities/BookingEntity';
@@ -234,6 +235,29 @@ export class BookingService {
         return acc;
       },
       {} as Record<string, GetAllBookingDTO[]>,
+    );
+
+    return groupedEntities;
+  }
+
+  async getTimes(
+    user: UserDTO,
+    filters?: BookingFilterDTO,
+  ): Promise<GetTimesUnavailableDTO[]> {
+    const where: FindManyOptions<Booking>['where'] = {};
+
+    where.userId = user.id;
+    if (filters) {
+      if (filters.startDate) where.startDate = filters.startDate;
+      if (filters.allocatableId) where.allocatableId = filters.allocatableId;
+    }
+
+    const allEntities = await this.bookingRepository.find({
+      where,
+    });
+
+    const groupedEntities = allEntities.map(
+      (it) => new GetTimesUnavailableDTO(it),
     );
 
     return groupedEntities;
