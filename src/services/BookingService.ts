@@ -105,7 +105,7 @@ export class BookingService {
         allowIds.includes(it.id),
       );
 
-      checkExtras.forEach(async (it) => {
+      booking.extras.forEach(async (it) => {
         const extra = {
           reservationId: savedReservation.id,
           extraId: it.id,
