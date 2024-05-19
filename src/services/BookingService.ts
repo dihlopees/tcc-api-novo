@@ -148,15 +148,17 @@ export class BookingService {
     return await this.bookingRepository.update(id, newBooking);
   }
 
-  async getOne(bookingId: number, user: UserDTO): Promise<Booking> {
+  async getOne(bookingId: number, user: UserDTO) {
     const userId = user.id;
 
     const entityFound = await this.bookingRepository
       .createQueryBuilder('booking')
       .leftJoinAndSelect('booking.bookingHasExtras', 'bhe')
       .leftJoinAndSelect('bhe.extra', 'extra')
+      .leftJoinAndSelect('booking.allocatable', 'allocatable')
+      .leftJoinAndSelect('allocatable.resourseType', 'resourseType')
       .where('booking.id = :bookingId', { bookingId })
-      .where('booking.userId = :userId', { userId })
+      .andWhere('booking.userId = :userId', { userId })
       .getOne();
 
     if (!entityFound)
@@ -166,7 +168,10 @@ export class BookingService {
         HttpStatus.NOT_FOUND,
       );
 
-    return entityFound;
+    return new GetAllBookingDTO(
+      entityFound,
+      entityFound.allocatable.resourseType,
+    );
   }
 
   async getAll(
