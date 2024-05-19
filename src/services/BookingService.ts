@@ -36,14 +36,16 @@ export class BookingService {
       note: booking.note,
       bookedForUserId: booking.bookedForUserId,
       courseId: booking.courseId,
+      title: booking.title,
     };
 
     const startDate = new Date(booking.startDate);
     const endDate = new Date(booking.endDate);
 
     if (
-      startDate.getDate() !== endDate.getDate() ||
-      startDate.getMonth() !== endDate.getMonth()
+      booking.endDate &&
+      (startDate.getDate() !== endDate.getDate() ||
+        startDate.getMonth() !== endDate.getMonth())
     )
       throw HttpExceptionDTO.warn(
         `Start date and end date must be the same`,
@@ -68,7 +70,7 @@ export class BookingService {
       startDateSaveOnReservation.setHours(+hoursSaved);
       startDateSaveOnReservation.setMinutes(+minutesSaved);
 
-      const finalDateSaveOnReservation = new Date(it.endDate);
+      const finalDateSaveOnReservation = new Date(it.startDate);
       const [hoursSavedFinal, minutesSavedFinal] = it.endTime.split(':');
       finalDateSaveOnReservation.setHours(+hoursSavedFinal);
       finalDateSaveOnReservation.setMinutes(+minutesSavedFinal);
@@ -138,6 +140,7 @@ export class BookingService {
       bookedForUserId: booking.bookedForUserId,
       reservationColor: booking.reservationColor,
       note: booking.note,
+      title: booking.title,
     };
 
     return await this.bookingRepository.update(id, newBooking);

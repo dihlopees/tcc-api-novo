@@ -13,8 +13,11 @@ export class CreateBookingDTO {
   @JoiSchema(Schema.startDate.required())
   startDate: string;
 
-  @JoiSchema(Schema.endDate.required())
+  @JoiSchema(Schema.endDate.optional())
   endDate: string;
+
+  @JoiSchema(Schema.title.required())
+  title: string;
 
   @JoiSchema(Schema.reservationColor.required())
   reservationColor: string;

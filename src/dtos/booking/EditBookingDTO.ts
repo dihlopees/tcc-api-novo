@@ -26,4 +26,7 @@ export class EditBookingDTO {
 
   @JoiSchema(Schema.id.optional())
   courseId: number;
+
+  @JoiSchema(Schema.title.optional())
+  title: string;
 }
