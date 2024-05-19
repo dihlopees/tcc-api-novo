@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Allocatable } from './AllocatableEntity';
 import { Course } from './CourseEntity';
+import { ReservationHasExtras } from './ReservationHasExtrasEntity';
 
 @Entity('booking')
 export class Booking {
@@ -61,4 +63,10 @@ export class Booking {
   @ManyToOne(() => Allocatable)
   @JoinColumn({ name: 'allocatable_id' })
   allocatable: Allocatable;
+
+  @OneToMany(
+    () => ReservationHasExtras,
+    (bookingHasExtras) => bookingHasExtras.reservation,
+  )
+  bookingHasExtras: ReservationHasExtras[];
 }

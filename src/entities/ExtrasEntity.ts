@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ReservationHasExtras } from './ReservationHasExtrasEntity';
 
 @Entity('extras')
 export class Extras {
@@ -13,4 +14,10 @@ export class Extras {
 
   @Column({ name: 'unit_id' })
   unitId: number;
+
+  @OneToMany(
+    () => ReservationHasExtras,
+    (bookingHasExtras) => bookingHasExtras.extra,
+  )
+  bookingHasExtras: ReservationHasExtras[];
 }

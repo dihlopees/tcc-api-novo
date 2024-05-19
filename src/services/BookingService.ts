@@ -147,13 +147,15 @@ export class BookingService {
   }
 
   async getOne(bookingId: number, user: UserDTO): Promise<Booking> {
-    const entityFound = await this.bookingRepository.findOne({
-      where: {
-        id: bookingId,
-        userId: user.id,
-      },
-      relations: ['allocatable'],
-    });
+    const userId = user.id;
+
+    const entityFound = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .leftJoinAndSelect('booking.bookingHasExtras', 'bhe')
+      .leftJoinAndSelect('bhe.extra', 'extra')
+      .where('booking.id = :bookingId', { bookingId })
+      .where('booking.userId = :userId', { userId })
+      .getOne();
 
     if (!entityFound)
       throw HttpExceptionDTO.warn(
