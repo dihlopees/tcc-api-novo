@@ -216,9 +216,8 @@ export class BookingService {
 
       const arrayWithDates = allEntities.map((it) => {
         const savedStartDate = new Date(it.startDate);
-        const savedEndDate = new Date(it.endDate);
 
-        if (savedStartDate >= startDate && savedEndDate <= endDate) return it;
+        if (savedStartDate >= startDate && savedStartDate <= endDate) return it;
       });
 
       const bookings: Booking[] = arrayWithDates.filter(
