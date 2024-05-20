@@ -143,6 +143,7 @@ export class BookingService {
       reservationColor: booking.reservationColor,
       note: booking.note,
       title: booking.title,
+      allocatableId: booking.allocatableId,
     };
 
     return await this.bookingRepository.update(id, newBooking);

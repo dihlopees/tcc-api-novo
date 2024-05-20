@@ -26,7 +26,7 @@ export class AuthenticationService {
     if (!user)
       throw HttpExceptionDTO.warn(
         `User not found`,
-        'Usuário não encontrada',
+        'Usuário incorreto',
         HttpStatus.NOT_FOUND,
       );
 
@@ -35,7 +35,7 @@ export class AuthenticationService {
     if (!passwordMatch) {
       throw HttpExceptionDTO.error(
         'Unauthorized',
-        'Invalid password',
+        'Senha incorreta',
         HttpStatus.FORBIDDEN,
       );
     }

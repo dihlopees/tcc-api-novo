@@ -29,4 +29,7 @@ export class EditBookingDTO {
 
   @JoiSchema(Schema.title.optional())
   title: string;
+
+  @JoiSchema(Schema.id.optional())
+  allocatableId: number;
 }
