@@ -105,7 +105,7 @@ export class BookingService {
         allowIds.includes(it.id),
       );
 
-      booking.extras.forEach(async (it) => {
+      checkExtras.forEach(async (it) => {
         const extra = {
           reservationId: savedReservation.id,
           extraId: it.id,
@@ -146,6 +146,21 @@ export class BookingService {
       allocatableId: booking.allocatableId,
     };
 
+    if (booking.extras) {
+      await this.reservationHasExtrasRepository.delete({
+        reservationId: entityFound.id,
+      });
+
+      booking.extras.forEach(async (it) => {
+        const extra = {
+          reservationId: entityFound.id,
+          extraId: it.id,
+          reservedQuantity: it.quantity,
+        };
+
+        await this.reservationHasExtrasRepository.save(extra);
+      });
+    }
     return await this.bookingRepository.update(id, newBooking);
   }
 
