@@ -26,7 +26,7 @@ export class AuthenticationService {
     if (!user)
       throw HttpExceptionDTO.warn(
         `User not found`,
-        'Usuário incorreto',
+        'Usuário não encontrado',
         HttpStatus.NOT_FOUND,
       );
 

@@ -1,5 +1,6 @@
 import { AllocatableType } from '../../entities/AllocatableTypeEntity';
 import { Booking } from '../../entities/BookingEntity';
+import { ReservationHasExtras } from '../../entities/ReservationHasExtrasEntity';
 
 export class GetAllBookingDTO {
   id: number;
@@ -19,7 +20,11 @@ export class GetAllBookingDTO {
   resourseType: number;
   extras?: BookingHasExtras[];
 
-  constructor(booking: Booking, type: AllocatableType) {
+  constructor(
+    booking: Booking,
+    type: AllocatableType,
+    extras: BookingHasExtras[],
+  ) {
     this.id = booking.id;
     this.userId = booking.userId;
     this.startTime = booking.startTime;
@@ -35,19 +40,16 @@ export class GetAllBookingDTO {
     this.createdAt = booking.createdAt;
     this.updatedAt = booking.updatedAt;
     this.resourseType = type.id;
-    this.extras = booking.bookingHasExtras;
+    this.extras = extras;
   }
 }
 
-type BookingHasExtras = {
+export class BookingHasExtras {
   id: number;
-  reservationId: number;
-  extraId: number;
-  reservedQuantity: number;
-  extra: {
-    id: number;
-    name: string;
-    availableQuantity: number;
-    unitId: number;
-  };
-};
+  quantity: number;
+
+  constructor(extras: ReservationHasExtras) {
+    this.id = extras.extraId;
+    this.quantity = extras.reservedQuantity;
+  }
+}

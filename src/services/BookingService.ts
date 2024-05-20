@@ -4,7 +4,10 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
 import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
-import { GetAllBookingDTO } from '../dtos/booking/GetAllBookingDTO';
+import {
+  BookingHasExtras,
+  GetAllBookingDTO,
+} from '../dtos/booking/GetAllBookingDTO';
 import { GetTimesUnavailableDTO } from '../dtos/booking/GetTimesUnavailableDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
 import { Allocatable } from '../entities/AllocatableEntity';
@@ -183,10 +186,13 @@ export class BookingService {
         'Não encontrada',
         HttpStatus.NOT_FOUND,
       );
-
+    const extras = entityFound.bookingHasExtras.map(
+      (it) => new BookingHasExtras(it),
+    );
     return new GetAllBookingDTO(
       entityFound,
       entityFound.allocatable.resourseType,
+      extras,
     );
   }
 
@@ -229,9 +235,14 @@ export class BookingService {
           if (!acc[cur.startDate]) {
             acc[cur.startDate] = [];
           }
+
+          const extras = cur.bookingHasExtras.map(
+            (it) => new BookingHasExtras(it),
+          );
           const bookingFormated = new GetAllBookingDTO(
             cur,
             cur.allocatable.resourseType,
+            extras,
           );
 
           acc[cur.startDate].push({ ...bookingFormated });
@@ -247,9 +258,13 @@ export class BookingService {
         if (!acc[cur.startDate]) {
           acc[cur.startDate] = [];
         }
+        const extras = cur.bookingHasExtras.map(
+          (it) => new BookingHasExtras(it),
+        );
         const bookingFormated = new GetAllBookingDTO(
           cur,
           cur.allocatable.resourseType,
+          extras,
         );
         acc[cur.startDate].push({ ...bookingFormated });
         return acc;
