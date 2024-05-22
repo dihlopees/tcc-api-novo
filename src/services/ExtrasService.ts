@@ -34,6 +34,7 @@ export class ExtrasService {
       name: entity.name,
       availableQuantity: entity.availableQuantity,
       unitId: unitEntity.id,
+      // availableQuantity: entity.availableQuantity,
     };
     return await this.extrasRepository.save(newExtra);
   }

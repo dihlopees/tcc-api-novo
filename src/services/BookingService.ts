@@ -110,19 +110,20 @@ export class BookingService {
 
       checkExtras.forEach(async (it) => {
         const extraEntity = allowExtrasOnUnit.find((item) => item.id === it.id);
-
+        console.log(extraEntity);
         if (!extraEntity) return;
-        else if (extraEntity.availableQuantity < it.quantity)
+        else if (extraEntity.availableQuantity < it.quantity) {
           throw HttpExceptionDTO.warn(
             `Ordered quantity is greater than available quantity`,
             'Quantidade solicitada é maior que quantidade disponível',
             HttpStatus.BAD_REQUEST,
           );
+        }
         const extra = {
           reservationId: savedReservation.id,
           extraId: it.id,
           reservedQuantity: it.quantity,
-          availableQuantity: it.quantity - extraEntity.availableQuantity,
+          availableQuantity: extraEntity.availableQuantity - it.quantity,
         };
 
         await this.reservationHasExtrasRepository.save(extra);
@@ -246,7 +247,7 @@ export class BookingService {
             acc[cur.startDate] = [];
           }
 
-          const extras = cur.bookingHasExtras.map(
+          const extras = cur.bookingHasExtras?.map(
             (it) => new BookingHasExtras(it),
           );
           const bookingFormated = new GetAllBookingDTO(
