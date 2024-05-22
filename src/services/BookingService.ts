@@ -269,7 +269,7 @@ export class BookingService {
         if (!acc[cur.startDate]) {
           acc[cur.startDate] = [];
         }
-        const extras = cur.bookingHasExtras?.map(
+        const extras = cur.bookingfsdfdsfHasExtras?.map(
           (it) => new BookingHasExtras(it),
         );
         const bookingFormated = new GetAllBookingDTO(
