@@ -29,7 +29,7 @@ export class ExtrasController {
 
   @Patch('/:id')
   async edit(
-    @Param() id: number,
+    @Param('id') id: number,
     @Body(JoiPipe) entityToUpdate: UpdateExtrasDTO,
   ) {
     const entityEdited = await this.extrasService.update(id, entityToUpdate);

@@ -104,8 +104,12 @@ export class AllocatableService {
   }
 
   async getOne(user: number): Promise<AllocatableDTO> {
-    const entityFound = await this.allocatableRepository.findOneBy({
-      id: user,
+    const entityFound = await this.allocatableRepository.findOne({
+      where: {
+        id: user,
+      },
+
+      relations: ['items', 'block'],
     });
 
     if (!entityFound)
@@ -115,15 +119,14 @@ export class AllocatableService {
         HttpStatus.NOT_FOUND,
       );
 
-    const itemsOnAllocatable =
-      await this.itemsAllocatableRepository.findOneOrFail({
-        where: { id: entityFound.itemsAllocatableId },
-      });
-
-    return new AllocatableDTO(entityFound, itemsOnAllocatable);
+    return new AllocatableDTO(
+      entityFound,
+      entityFound.items,
+      entityFound.block,
+    );
   }
 
-  async getAll(filter: FilterAllocatableDTO): Promise<Allocatable[]> {
+  async getAll(filter: FilterAllocatableDTO): Promise<AllocatableDTO[]> {
     const where: FindManyOptions<Allocatable>['where'] = {};
 
     if (filter.name) where.name = filter.name;
@@ -133,7 +136,7 @@ export class AllocatableService {
 
     const allEntities = await this.allocatableRepository.find({
       where,
-      relations: ['items'],
+      relations: ['items', 'block'],
     });
 
     if (!allEntities.length)
@@ -143,7 +146,7 @@ export class AllocatableService {
         HttpStatus.NOT_FOUND,
       );
 
-    return allEntities;
+    return allEntities.map((it) => new AllocatableDTO(it, it.items, it.block));
   }
 
   async delete(
