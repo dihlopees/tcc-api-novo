@@ -4,7 +4,7 @@ import { ItemsAllocatable } from './itemsAllocatable/ItemsAllocatableDTO';
 
 JoiSchemaOptions({ allowUnknown: false });
 export class EditAllocatableDTO {
-  @JoiSchema(Schema.username.required())
+  @JoiSchema(Schema.username.optional())
   name: string;
 
   @JoiSchema(Schema.id.optional())
