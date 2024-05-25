@@ -26,6 +26,9 @@ export class UserEntity {
   @Column({ name: 'role_id' })
   roleId: number;
 
+  @Column({ name: 'force_password' })
+  forcePassword: boolean;
+
   @OneToOne(() => RoleEntity)
   @JoinColumn({ name: 'role_id' })
   role: RoleEntity;

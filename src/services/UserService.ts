@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { UpdatePasswordUserDTO } from '../dtos/users/ChangePasswordDTO';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
@@ -59,6 +60,40 @@ export class UserService {
       name: user.name,
       email: user.email,
       roleId: roleToSave.id,
+    });
+    return updateResult.affected === 1;
+  }
+
+  async updateUserPassword(
+    id: number,
+    user: UpdatePasswordUserDTO,
+  ): Promise<boolean> {
+    const userToUpdate = await this.usersRepository.findOneBy({
+      id,
+    });
+    if (!userToUpdate)
+      throw HttpExceptionDTO.warn(
+        `User not found`,
+        'Usuário não encontrado',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const passwordMatch = await bcrypt.compare(
+      user.oldPassword,
+      userToUpdate.password,
+    );
+
+    if (!passwordMatch) {
+      throw HttpExceptionDTO.error(
+        'Unauthorized',
+        'Senha antiga incorreta',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    const encryptPassword = await bcrypt.hash(user.password, 10);
+    const updateResult = await this.usersRepository.update(id, {
+      password: encryptPassword,
+      forcePassword: false,
     });
     return updateResult.affected === 1;
   }
