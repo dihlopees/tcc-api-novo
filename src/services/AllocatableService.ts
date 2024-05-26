@@ -108,7 +108,6 @@ export class AllocatableService {
       where: {
         id: user,
       },
-
       relations: ['items', 'block'],
     });
 
@@ -124,6 +123,8 @@ export class AllocatableService {
       entityFound.items,
       entityFound.block,
     );
+
+    // return entityFound;
   }
 
   async getAll(filter: FilterAllocatableDTO): Promise<AllocatableDTO[]> {

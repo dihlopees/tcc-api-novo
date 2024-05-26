@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { UnitEntity } from './UnitEntity';
 
@@ -17,6 +19,12 @@ export class Block {
 
   @Column({ name: 'unit_id' })
   unitId: number;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @OneToOne(() => UnitEntity)
   @JoinColumn({ name: 'unit_id' })
