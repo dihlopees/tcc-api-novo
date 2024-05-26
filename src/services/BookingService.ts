@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, In, Repository } from 'typeorm';
 import { BookingFilterDTO } from '../dtos/booking/BookingFilterDTO';
 import { CreateBookingDTO } from '../dtos/booking/CreateBookingDTO';
 import { EditBookingDTO } from '../dtos/booking/EditBookingDTO';
@@ -46,6 +46,18 @@ export class BookingService {
 
     const startDate = new Date(booking.startDate);
     const endDate = new Date(booking.endDate);
+    const today = new Date();
+
+    const midnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+
+    if (startDate < midnight)
+      throw HttpExceptionDTO.warn(
+        `You cannot schedule a resource in the past`,
+        'Data de início não pode ser menor que hoje',
+        HttpStatus.BAD_REQUEST,
+      );
 
     if (
       booking.endDate &&
@@ -92,44 +104,104 @@ export class BookingService {
       }
     });
 
-    const savedReservation = await this.bookingRepository.save(newBooking);
+    let dontSaveExtras: any[] | null = [];
+    const extrasToSave: any[] = [];
 
     if (booking.extras) {
+      const bookingsOnSameTime = await this.bookingRepository.find({
+        where: {
+          startDate: booking.startDate,
+          startTime: booking.startTime,
+        },
+      });
+      const reservationsId = bookingsOnSameTime.map((it) => it.id);
+      const reservationHasExtras =
+        await this.reservationHasExtrasRepository.find({
+          where: {
+            reservationId: In(reservationsId),
+          },
+        });
+
       const allocatableEntity = await this.allocatableRepository.findOne({
-        where: { id: savedReservation.allocatableId },
+        where: { id: booking.allocatableId },
         relations: ['block'],
       });
 
       const allowExtrasOnUnit = await this.extrasRepository.find({
         where: { unitId: allocatableEntity?.block.unitId },
       });
+
       const allowIds = allowExtrasOnUnit.map((it) => it.id);
-      const checkExtras = booking.extras?.filter((it) =>
+      const allowExtrasCheckedToSave = booking.extras?.filter((it) =>
         allowIds.includes(it.id),
       );
 
-      checkExtras.forEach(async (it) => {
-        const extraEntity = allowExtrasOnUnit.find((item) => item.id === it.id);
-        console.log(extraEntity);
-        if (!extraEntity) return;
-        else if (extraEntity.availableQuantity < it.quantity) {
-          throw HttpExceptionDTO.warn(
-            `Ordered quantity is greater than available quantity`,
-            'Quantidade solicitada é maior que quantidade disponível',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-        const extra = {
-          reservationId: savedReservation.id,
-          extraId: it.id,
-          reservedQuantity: it.quantity,
-          availableQuantity: extraEntity.availableQuantity - it.quantity,
-        };
+      allowExtrasCheckedToSave.map(async (extraToSave) => {
+        const extraEntity = allowExtrasOnUnit.find(
+          (extra) => extra.id === extraToSave.id,
+        );
+        const reservationHasExtraAlreedSaved = reservationHasExtras.find(
+          (rhx) => rhx.extraId === extraToSave.id,
+        );
 
-        await this.reservationHasExtrasRepository.save(extra);
+        if (!extraEntity) return;
+        if (extraEntity.availableQuantity < extraToSave.quantity) {
+          dontSaveExtras?.push({
+            id: extraToSave.id,
+            label: extraEntity.name,
+            reason: 'Quantidade solicitada é maior que quantidade disponível',
+          });
+          return;
+        }
+        if (
+          reservationHasExtraAlreedSaved &&
+          extraToSave.quantity >
+            reservationHasExtraAlreedSaved?.availableQuantity
+        ) {
+          dontSaveExtras?.push({
+            id: extraToSave.id,
+            label: extraEntity.name,
+            reason: 'Quantidade solicitada é maior que quantidade disponível',
+          });
+          return;
+        }
+
+        extrasToSave.push({
+          extraId: extraToSave.id,
+          reservedQuantity: extraToSave.quantity,
+          availableQuantity:
+            extraEntity.availableQuantity - extraToSave.quantity,
+        });
       });
     }
-    return savedReservation;
+
+    if (dontSaveExtras.length)
+      throw HttpExceptionDTO.warn(
+        `Ordered quantity is greater than available quantity`,
+        'Quantidade solicitada é maior que quantidade disponível',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    await this.bookingRepository.manager.transaction(
+      'REPEATABLE READ',
+      async (manager) => {
+        const savedReservation = await manager
+          .getRepository(Booking)
+          .save(newBooking);
+
+        const reservationHasExtrasToSave = extrasToSave.map((it) => {
+          return {
+            reservationId: savedReservation.id,
+            ...it,
+          };
+        });
+        await manager
+          .getRepository(ReservationHasExtras)
+          .save(reservationHasExtrasToSave);
+
+        return savedReservation;
+      },
+    );
   }
 
   async update(id: number, booking: EditBookingDTO, user: UserDTO) {

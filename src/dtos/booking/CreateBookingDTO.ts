@@ -1,6 +1,6 @@
 import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 import { Schema } from '../../schemas/Schema';
-import { ReservationHasExtrasDTO } from './reservationHasExtras/ReservationHasExtrasDTO';
+import { ExtrasDTO } from './reservationHasExtras/ReservationHasExtrasDTO';
 
 JoiSchemaOptions({ allowUnknown: false });
 export class CreateBookingDTO {
@@ -35,5 +35,5 @@ export class CreateBookingDTO {
   courseId: number;
 
   @JoiSchema(Schema.extras.optional())
-  extras?: ReservationHasExtrasDTO[];
+  extras?: ExtrasDTO[];
 }

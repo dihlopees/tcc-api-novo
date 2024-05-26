@@ -2,7 +2,7 @@ import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 import { Schema } from '../../../schemas/Schema';
 
 JoiSchemaOptions({ allowUnknown: false });
-export class ReservationHasExtrasDTO {
+export class ExtrasDTO {
   @JoiSchema(Schema.id.required())
   id: number;
 
