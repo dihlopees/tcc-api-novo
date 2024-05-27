@@ -1,11 +1,14 @@
-export class UpdateExtrasDTO {
-  unit?: string;
-  availableQuantity?: number;
-  name?: string;
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
+import { Schema } from '../../schemas/Schema';
 
-  constructor(name?: string, unit?: string, availableQuantity?: number) {
-    this.name = name;
-    this.availableQuantity = availableQuantity;
-    this.unit = unit;
-  }
+JoiSchemaOptions({ allowUnknown: false });
+export class UpdateExtrasDTO {
+  @JoiSchema(Schema.id.optional())
+  unitId: number;
+
+  @JoiSchema(Schema.availableQuantity.optional())
+  availableQuantity: number;
+
+  @JoiSchema(Schema.username.optional())
+  name: string;
 }

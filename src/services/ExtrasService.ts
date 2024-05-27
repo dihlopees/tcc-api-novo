@@ -39,21 +39,10 @@ export class ExtrasService {
   }
 
   async update(id: number, entityToUpdate: UpdateExtrasDTO) {
-    const unitEntity = await this.unitRepository.findOneBy({
-      name: entityToUpdate.unit,
-    });
-
-    if (!unitEntity)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrada a unidade informada',
-        HttpStatus.NOT_FOUND,
-      );
-
     return await this.extrasRepository.update(id, {
       name: entityToUpdate.name,
       availableQuantity: entityToUpdate.availableQuantity,
-      unitId: unitEntity.id,
+      unitId: entityToUpdate.unitId,
     });
   }
 
