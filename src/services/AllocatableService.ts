@@ -123,8 +123,6 @@ export class AllocatableService {
       entityFound.items,
       entityFound.block,
     );
-
-    // return entityFound;
   }
 
   async getAll(filter: FilterAllocatableDTO): Promise<AllocatableDTO[]> {

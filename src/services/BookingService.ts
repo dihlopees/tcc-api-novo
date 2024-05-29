@@ -80,17 +80,20 @@ export class BookingService {
 
     startDate.setHours(+hours);
     startDate.setMinutes(+minutes);
+    startDate.setSeconds(57);
 
     bookingReservationEntities.forEach((it) => {
       const startDateSaveOnReservation = new Date(it.startDate);
       const [hoursSaved, minutesSaved] = it.startTime.split(':');
       startDateSaveOnReservation.setHours(+hoursSaved);
       startDateSaveOnReservation.setMinutes(+minutesSaved);
+      startDateSaveOnReservation.setSeconds(0);
 
       const finalDateSaveOnReservation = new Date(it.startDate);
       const [hoursSavedFinal, minutesSavedFinal] = it.endTime.split(':');
       finalDateSaveOnReservation.setHours(+hoursSavedFinal);
       finalDateSaveOnReservation.setMinutes(+minutesSavedFinal);
+      finalDateSaveOnReservation.setSeconds(0);
 
       if (
         startDate.getTime() <= finalDateSaveOnReservation.getTime() &&
