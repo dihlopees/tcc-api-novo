@@ -18,11 +18,13 @@ export class GetAllBookingDTO {
   createdAt: Date;
   updatedAt: Date;
   resourseType: number;
+  bookedByMe: boolean;
   extras?: BookingHasExtras[];
 
   constructor(
     booking: Booking,
     type: AllocatableType,
+    bookedByMe: boolean,
     extras: BookingHasExtras[],
   ) {
     this.id = booking.id;
@@ -40,6 +42,7 @@ export class GetAllBookingDTO {
     this.createdAt = booking.createdAt;
     this.updatedAt = booking.updatedAt;
     this.resourseType = type.id;
+    this.bookedByMe = bookedByMe;
     this.extras = extras;
   }
 }

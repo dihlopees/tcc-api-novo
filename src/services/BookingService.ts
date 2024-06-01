@@ -278,6 +278,7 @@ export class BookingService {
     return new GetAllBookingDTO(
       entityFound,
       entityFound.allocatable.resourseType,
+      entityFound.userId === user.id,
       extras,
     );
   }
@@ -328,6 +329,7 @@ export class BookingService {
           const bookingFormated = new GetAllBookingDTO(
             cur,
             cur.allocatable.resourseType,
+            cur.userId === user.id,
             extras,
           );
 
@@ -350,6 +352,7 @@ export class BookingService {
         const bookingFormated = new GetAllBookingDTO(
           cur,
           cur.allocatable.resourseType,
+          cur.userId === user.id,
           extras,
         );
         acc[cur.startDate].push({ ...bookingFormated });
