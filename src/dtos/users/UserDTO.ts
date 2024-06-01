@@ -7,6 +7,7 @@ export class UserDTO {
   role: string;
   createdAt: string;
   updatedAt: string;
+  forcePassword: boolean;
 
   constructor(user: UserEntity, role: string) {
     this.id = user.id;
@@ -15,5 +16,6 @@ export class UserDTO {
     this.role = role;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
+    this.forcePassword = user.forcePassword;
   }
 }

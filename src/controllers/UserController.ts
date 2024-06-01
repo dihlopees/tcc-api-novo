@@ -10,6 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
+import { UpdatePasswordUserDTO } from '../dtos/users/ChangePasswordDTO';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
@@ -41,11 +42,28 @@ export class UserController {
       );
   }
 
+  @Patch('/password/:id')
+  async editPassword(
+    @Param('id') id: number,
+    @Body(JoiPipe) userPasswords: UpdatePasswordUserDTO,
+  ): Promise<ResponseDTO<true, unknown> | undefined> {
+    const newUser = await this.userService.updateUserPassword(
+      id,
+      userPasswords,
+    );
+    if (newUser)
+      return new ResponseDTO(
+        HttpStatus.OK,
+        'Senha atualizada com sucesso',
+        newUser,
+      );
+  }
+
   @Get('/me')
   async getMe(
-    @Body(JoiPipe) user: number,
+    @Req() userLogged: ReqUserDTO,
   ): Promise<ResponseDTO<UserDTO, unknown>> {
-    const myUser = await this.userService.getMe(user);
+    const myUser = await this.userService.getMe(userLogged.user.id);
     return new ResponseDTO(HttpStatus.OK, 'User retrived', myUser);
   }
 
