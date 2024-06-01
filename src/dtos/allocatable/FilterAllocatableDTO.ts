@@ -13,5 +13,5 @@ export class FilterAllocatableDTO {
   blockId: number;
 
   @JoiSchema(Schema.isDisabled.optional())
-  isDisabled: boolean = false;
+  isDisabled: boolean;
 }

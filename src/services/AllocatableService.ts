@@ -131,7 +131,10 @@ export class AllocatableService {
     if (filter.name) where.name = filter.name;
     if (filter.blockId) where.blockId = filter.blockId;
     if (filter.typeId) where.typeId = filter.typeId;
-    if (filter.isDisabled) where.isDisabled = filter.isDisabled;
+    if (typeof filter.isDisabled === 'string') {
+      const isDisabledBoolean = filter.isDisabled === 'true';
+      where.isDisabled = isDisabledBoolean;
+    }
 
     const allEntities = await this.allocatableRepository.find({
       where,
