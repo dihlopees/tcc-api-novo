@@ -28,6 +28,23 @@ export class UserController {
     return new ResponseDTO(HttpStatus.OK, 'User retrived', newUser);
   }
 
+  @Patch('/password')
+  async editPassword(
+    @Body(JoiPipe) userPasswords: UpdatePasswordUserDTO,
+    @Req() userLogged: ReqUserDTO,
+  ): Promise<ResponseDTO<true, unknown> | undefined> {
+    const newUser = await this.userService.updateUserPassword(
+      userLogged.user.id,
+      userPasswords,
+    );
+    if (newUser)
+      return new ResponseDTO(
+        HttpStatus.OK,
+        'Senha atualizada com sucesso',
+        newUser,
+      );
+  }
+
   @Patch('/:id')
   async editUser(
     @Param() id: number,
@@ -38,23 +55,6 @@ export class UserController {
       return new ResponseDTO(
         HttpStatus.OK,
         'Usuário atualizado com sucesso',
-        newUser,
-      );
-  }
-
-  @Patch('/password/:id')
-  async editPassword(
-    @Param('id') id: number,
-    @Body(JoiPipe) userPasswords: UpdatePasswordUserDTO,
-  ): Promise<ResponseDTO<true, unknown> | undefined> {
-    const newUser = await this.userService.updateUserPassword(
-      id,
-      userPasswords,
-    );
-    if (newUser)
-      return new ResponseDTO(
-        HttpStatus.OK,
-        'Senha atualizada com sucesso',
         newUser,
       );
   }
