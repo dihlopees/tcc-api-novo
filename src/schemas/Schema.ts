@@ -6,9 +6,6 @@ export type OrderingTypes = 'ASC' | 'DESC';
 export const orderByValues = ['ASC', 'DESC'];
 
 export class Schema {
-  static page = Joi.number().min(0).default(0);
-  static pageSize = Joi.number().min(1).max(100).default(20);
-
   static email = Joi.string()
     .pattern(
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,

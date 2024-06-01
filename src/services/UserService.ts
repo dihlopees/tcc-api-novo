@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { FindManyOptions, ILike, Repository } from 'typeorm';
 import { UpdatePasswordUserDTO } from '../dtos/users/ChangePasswordDTO';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
+import { UserFilterDTO } from '../dtos/users/UserFilterDTO';
 import { RoleEntity } from '../entities/RoleEntity';
 import { UserEntity } from '../entities/UserEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -116,8 +117,24 @@ export class UserService {
     return new UserDTO(myUser, myUser.role.role);
   }
 
-  async getAll(): Promise<UserDTO[]> {
-    const allUsers = await this.usersRepository.find({ relations: ['role'] });
+  async getAll(filters: UserFilterDTO): Promise<UserDTO[]> {
+    const where: FindManyOptions<UserEntity>['where'] = {};
+
+    if (filters) {
+      if (filters.name) where.name = ILike(`%${filters.name}%`);
+      if (filters.email) where.email = ILike(`%${filters.email}%`);
+      if (filters.role) {
+        const role = await this.roleRepository.findOne({
+          where: { role: filters.role },
+        });
+
+        where.roleId = role?.id;
+      }
+    }
+    const allUsers = await this.usersRepository.find({
+      where,
+      relations: ['role'],
+    });
 
     if (!allUsers.length)
       throw HttpExceptionDTO.warn(

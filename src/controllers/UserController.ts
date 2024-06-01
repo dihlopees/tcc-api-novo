@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { JoiPipe } from 'nestjs-joi';
@@ -14,6 +15,7 @@ import { UpdatePasswordUserDTO } from '../dtos/users/ChangePasswordDTO';
 import { CreateUserDTO } from '../dtos/users/CreateUserDTO';
 import { UpdateUserDTO } from '../dtos/users/UpdateUserDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
+import { UserFilterDTO } from '../dtos/users/UserFilterDTO';
 import { ReqUserDTO } from '../helpers/ReqUserDTO';
 import { ResponseDTO } from '../helpers/ResponseDTO';
 import { UserService } from '../services/UserService';
@@ -68,8 +70,8 @@ export class UserController {
   }
 
   @Get('/all')
-  async getAll() {
-    const allUsers = await this.userService.getAll();
+  async getAll(@Query() filter: UserFilterDTO) {
+    const allUsers = await this.userService.getAll(filter);
 
     return new ResponseDTO(HttpStatus.OK, 'Users retrived', allUsers);
   }
