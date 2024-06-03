@@ -289,7 +289,6 @@ export class BookingService {
   ): Promise<Record<string, GetAllBookingDTO[]>> {
     const where: FindManyOptions<Booking>['where'] = {};
 
-    where.userId = user.id;
     if (filters) {
       if (filters.endTime) where.endTime = filters.endTime;
       if (filters.startTime) where.startTime = filters.startTime;

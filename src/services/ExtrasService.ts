@@ -67,12 +67,7 @@ export class ExtrasService {
     if (filter.unitId) where.unitId = filter.unitId;
     const allEntities = await this.extrasRepository.find({ where });
 
-    if (!allEntities.length)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrados',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!allEntities.length) return [];
 
     return allEntities;
   }

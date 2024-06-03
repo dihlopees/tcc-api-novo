@@ -40,12 +40,7 @@ export class UnitService {
   async getAll() {
     const allEntities = await this.unitRepository.find();
 
-    if (!allEntities.length)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrados',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!allEntities.length) return [];
 
     return allEntities;
   }

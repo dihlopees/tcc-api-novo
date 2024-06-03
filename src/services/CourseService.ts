@@ -40,12 +40,7 @@ export class CourseService {
   async getAll() {
     const allEntities = await this.courseRepository.find();
 
-    if (!allEntities.length)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrados',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!allEntities.length) return [];
 
     return allEntities;
   }

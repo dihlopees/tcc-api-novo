@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, ILike, Repository } from 'typeorm';
 import { AllocatableDTO } from '../dtos/allocatable/AllocatableDTO';
 import { CreateAllocatableDTO } from '../dtos/allocatable/CreateAllocatableDTO';
 import { EditAllocatableDTO } from '../dtos/allocatable/EditAllocatableDTO';
@@ -103,7 +103,7 @@ export class AllocatableService {
     return new AllocatableDTO(allocatableSaved, itemsOnAllocatable);
   }
 
-  async getOne(user: number): Promise<AllocatableDTO> {
+  async getOne(user: number): Promise<AllocatableDTO | never[]> {
     const entityFound = await this.allocatableRepository.findOne({
       where: {
         id: user,
@@ -111,12 +111,7 @@ export class AllocatableService {
       relations: ['items', 'block'],
     });
 
-    if (!entityFound)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrada',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!entityFound) return [];
 
     return new AllocatableDTO(
       entityFound,
@@ -128,7 +123,7 @@ export class AllocatableService {
   async getAll(filter: FilterAllocatableDTO): Promise<AllocatableDTO[]> {
     const where: FindManyOptions<Allocatable>['where'] = {};
 
-    if (filter.name) where.name = filter.name;
+    if (filter.name) where.name = ILike(`%${filter.name}%`);
     if (filter.blockId) where.blockId = filter.blockId;
     if (filter.typeId) where.typeId = filter.typeId;
     if (typeof filter.isDisabled === 'string') {
@@ -141,12 +136,7 @@ export class AllocatableService {
       relations: ['items', 'block'],
     });
 
-    if (!allEntities.length)
-      throw HttpExceptionDTO.warn(
-        `Not found`,
-        'Não encontrados',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!allEntities.length) return [];
 
     return allEntities.map((it) => new AllocatableDTO(it, it.items, it.block));
   }

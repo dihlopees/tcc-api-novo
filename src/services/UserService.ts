@@ -111,13 +111,13 @@ export class UserService {
       throw HttpExceptionDTO.warn(
         `User not found`,
         'Usuário não encontrada',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
       );
 
     return new UserDTO(myUser, myUser.role.role);
   }
 
-  async getAll(filters: UserFilterDTO): Promise<UserDTO[]> {
+  async getAll(filters: UserFilterDTO) {
     const where: FindManyOptions<UserEntity>['where'] = {};
 
     if (filters) {
@@ -136,12 +136,7 @@ export class UserService {
       relations: ['role'],
     });
 
-    if (!allUsers.length)
-      throw HttpExceptionDTO.warn(
-        `Users not found`,
-        'Usuários não encontrados',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!allUsers.length) return [];
 
     return allUsers.map((it) => new UserDTO(it, it.role.role));
   }
