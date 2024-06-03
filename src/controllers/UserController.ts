@@ -47,6 +47,21 @@ export class UserController {
       );
   }
 
+  @Post('/force-password')
+  async forcePassword(
+    @Req() userLogged: ReqUserDTO,
+  ): Promise<ResponseDTO<true, unknown> | undefined> {
+    const newUser = await this.userService.updateForcePassword(
+      userLogged.user.id,
+    );
+    if (newUser)
+      return new ResponseDTO(
+        HttpStatus.OK,
+        'Senha mantida com sucesso',
+        newUser,
+      );
+  }
+
   @Patch('/:id')
   async editUser(
     @Param() id: number,

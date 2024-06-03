@@ -99,6 +99,23 @@ export class UserService {
     return updateResult.affected === 1;
   }
 
+  async updateForcePassword(id: number): Promise<boolean> {
+    const userToUpdate = await this.usersRepository.findOneBy({
+      id,
+    });
+    if (!userToUpdate)
+      throw HttpExceptionDTO.warn(
+        `User not found`,
+        'Usuário não encontrado',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const updateResult = await this.usersRepository.update(id, {
+      forcePassword: false,
+    });
+    return updateResult.affected === 1;
+  }
+
   async getMe(user: number): Promise<UserDTO> {
     const myUser = await this.usersRepository.findOne({
       where: {
