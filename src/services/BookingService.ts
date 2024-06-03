@@ -254,7 +254,7 @@ export class BookingService {
   }
 
   async getOne(bookingId: number, user: UserDTO) {
-    const userId = user.id;
+    // const userId = user.id;
 
     const entityFound = await this.bookingRepository
       .createQueryBuilder('booking')
@@ -263,14 +263,14 @@ export class BookingService {
       .leftJoinAndSelect('booking.allocatable', 'allocatable')
       .leftJoinAndSelect('allocatable.resourseType', 'resourseType')
       .where('booking.id = :bookingId', { bookingId })
-      .andWhere('booking.userId = :userId', { userId })
+      // .andWhere('booking.userId = :userId', { userId })
       .getOne();
 
     if (!entityFound)
       throw HttpExceptionDTO.warn(
         `Not found`,
         'Não encontrada',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
       );
     const extras = entityFound.bookingHasExtras.map(
       (it) => new BookingHasExtras(it),

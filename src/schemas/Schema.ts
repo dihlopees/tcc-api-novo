@@ -27,37 +27,6 @@ export class Schema {
 
   static isDisabled = Joi.boolean().optional();
 
-  static filterParams = Joi.object({
-    ids: Joi.array().items(this.id).min(1).unique().optional(),
-    roles: Joi.array().items(Joi.string()).min(1).unique().optional(),
-    companyIds: Joi.array().items(this.id).min(1).unique().optional(),
-  });
-
-  static orderParams = Joi.object({
-    ids: Joi.string()
-      .valid(...orderByValues)
-      .optional(),
-    roles: Joi.string()
-      .valid(...orderByValues)
-      .optional(),
-    companyIds: Joi.string()
-      .valid(...orderByValues)
-      .optional(),
-    names: Joi.string()
-      .valid(...orderByValues)
-      .optional(),
-  })
-    .min(1)
-    .max(1);
-
-  static searchParams = Joi.object({
-    id: Joi.number().min(1).optional(),
-    companyId: Joi.number().min(1).optional(),
-    name: Joi.string().min(1).optional(),
-    email: Joi.string().min(1).optional(),
-    companyName: Joi.string().min(1).optional(),
-  }).min(1);
-
   static itemsAllocatable = Joi.object({
     seatsQuantity: Joi.number().allow(null).optional(),
     multimediaQuantity: Joi.number().allow(null).optional(),
@@ -82,4 +51,7 @@ export class Schema {
   static reservationColor = Joi.string().required();
 
   static quantity = Joi.number().required();
+
+  static type = Joi.string().required();
+  static block = Joi.string().required();
 }

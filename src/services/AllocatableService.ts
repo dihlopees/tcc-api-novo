@@ -103,10 +103,10 @@ export class AllocatableService {
     return new AllocatableDTO(allocatableSaved, itemsOnAllocatable);
   }
 
-  async getOne(user: number): Promise<AllocatableDTO | never[]> {
+  async getOne(id: number): Promise<AllocatableDTO | never[]> {
     const entityFound = await this.allocatableRepository.findOne({
       where: {
-        id: user,
+        id: id,
       },
       relations: ['items', 'block'],
     });
@@ -124,6 +124,7 @@ export class AllocatableService {
     const where: FindManyOptions<Allocatable>['where'] = {};
 
     if (filter.name) where.name = ILike(`%${filter.name}%`);
+    if (filter.block) where.block = ILike(`%${filter.block}%`);
     if (filter.blockId) where.blockId = filter.blockId;
     if (filter.typeId) where.typeId = filter.typeId;
     if (typeof filter.isDisabled === 'string') {
