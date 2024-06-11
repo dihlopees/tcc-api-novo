@@ -299,7 +299,7 @@ export class BookingService {
 
     let allEntities = await this.bookingRepository.find({
       where,
-      relations: ['allocatable.resourseType'],
+      relations: ['allocatable', 'allocatable.resourseType'],
     });
 
     if (filters && filters.startDate && filters.endDate) {

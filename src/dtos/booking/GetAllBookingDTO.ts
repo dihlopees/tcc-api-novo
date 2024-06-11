@@ -15,6 +15,7 @@ export class GetAllBookingDTO {
   reservationColor: string;
   courseId: number;
   allocatableId: number;
+  allocatableName: string;
   createdAt: Date;
   updatedAt: Date;
   resourseType: number;
@@ -39,6 +40,7 @@ export class GetAllBookingDTO {
     this.reservationColor = booking.reservationColor;
     this.courseId = booking.courseId;
     this.allocatableId = booking.allocatableId;
+    this.allocatableName = booking.allocatable.name;
     this.createdAt = booking.createdAt;
     this.updatedAt = booking.updatedAt;
     this.resourseType = type.id;
