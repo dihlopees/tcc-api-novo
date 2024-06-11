@@ -292,8 +292,10 @@ export class BookingService {
     if (filters) {
       if (filters.endTime) where.endTime = filters.endTime;
       if (filters.startTime) where.startTime = filters.startTime;
-      if (filters.startDate && !filters.endDate)
+      if (filters.startDate && !filters.endDate) {
+        if (user.role !== 'admin') where.userId = user.id;
         where.startDate = filters.startDate;
+      }
       if (filters.allocatableId) where.allocatableId = filters.allocatableId;
     }
 
