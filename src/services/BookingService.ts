@@ -46,10 +46,17 @@ export class BookingService {
 
     const startDate = new Date(booking.startDate);
     const endDate = new Date(booking.endDate);
+
     const today = new Date();
+    const timezoneOffset = today.getTimezoneOffset();
+    const localToday = new Date(today.getTime() - timezoneOffset * 60 * 1000);
 
     const midnight = new Date(
-      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+      Date.UTC(
+        localToday.getUTCFullYear(),
+        localToday.getUTCMonth(),
+        localToday.getUTCDate(),
+      ),
     );
 
     if (startDate < midnight)
