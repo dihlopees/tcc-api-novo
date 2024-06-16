@@ -4,6 +4,7 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
 import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
+import { Allocatable } from '../entities/AllocatableEntity';
 import { Extras } from '../entities/ExtrasEntity';
 import { UnitEntity } from '../entities/UnitEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
@@ -16,6 +17,9 @@ export class ExtrasService {
 
     @InjectRepository(UnitEntity)
     private readonly unitRepository: Repository<UnitEntity>,
+
+    @InjectRepository(Allocatable)
+    private readonly allocatableRepository: Repository<Allocatable>,
   ) {}
 
   async create(entity: CreateExtrasDTO): Promise<Extras> {
@@ -61,10 +65,18 @@ export class ExtrasService {
     return entityFound;
   }
 
-  async getAll(filter: { unitId: number }) {
+  async getAll(filter: { unitId?: number; allocatableId?: number }) {
     const where: FindManyOptions<Extras>['where'] = {};
 
     if (filter.unitId) where.unitId = filter.unitId;
+    if (filter.allocatableId) {
+      const allocatableEntity = await this.allocatableRepository.findOne({
+        where: { id: filter.allocatableId },
+        relations: ['block'],
+      });
+
+      where.unitId = allocatableEntity?.block.unitId;
+    }
     const allEntities = await this.extrasRepository.find({ where });
 
     if (!allEntities.length) return [];
