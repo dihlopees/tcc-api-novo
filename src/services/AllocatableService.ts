@@ -135,6 +135,7 @@ export class AllocatableService {
     const allEntities = await this.allocatableRepository.find({
       where,
       relations: ['items', 'block'],
+      order: { createdAt: 'DESC' },
     });
 
     if (!allEntities.length) return [];

@@ -45,7 +45,10 @@ export class BlockService {
 
     if (filter.unitId) where.unitId = filter.unitId;
 
-    const allEntities = await this.blockRepository.find({ where });
+    const allEntities = await this.blockRepository.find({
+      where,
+      order: { createdAt: 'DESC' },
+    });
 
     if (!allEntities.length) return [];
 

@@ -72,6 +72,7 @@ export class ExtrasService {
     if (filter.allocatableId) {
       const allocatableEntity = await this.allocatableRepository.findOne({
         where: { id: filter.allocatableId },
+        order: { createdAt: 'DESC' },
         relations: ['block'],
       });
 

@@ -151,6 +151,7 @@ export class UserService {
     const allUsers = await this.usersRepository.find({
       where,
       relations: ['role'],
+      order: { createdAt: 'DESC' },
     });
 
     if (!allUsers.length) return [];

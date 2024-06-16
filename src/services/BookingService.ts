@@ -350,6 +350,12 @@ export class BookingService {
         },
         {} as Record<string, GetAllBookingDTO[]>,
       );
+
+      Object.keys(groupedEntities).forEach((date) => {
+        groupedEntities[date].sort((a, b) =>
+          a.startTime.localeCompare(b.startTime),
+        );
+      });
       if (groupedEntities) return groupedEntities;
     }
 

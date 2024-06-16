@@ -38,7 +38,9 @@ export class CourseService {
   }
 
   async getAll() {
-    const allEntities = await this.courseRepository.find();
+    const allEntities = await this.courseRepository.find({
+      order: { createdAt: 'DESC' },
+    });
 
     if (!allEntities.length) return [];
 

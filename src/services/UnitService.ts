@@ -38,7 +38,9 @@ export class UnitService {
   }
 
   async getAll() {
-    const allEntities = await this.unitRepository.find();
+    const allEntities = await this.unitRepository.find({
+      order: { createdAt: 'DESC' },
+    });
 
     if (!allEntities.length) return [];
 
