@@ -192,7 +192,7 @@ export class BookingService {
         HttpStatus.BAD_REQUEST,
       );
 
-    await this.bookingRepository.manager.transaction(
+    const entities = await this.bookingRepository.manager.transaction(
       'REPEATABLE READ',
       async (manager) => {
         const savedReservation = await manager
@@ -212,6 +212,7 @@ export class BookingService {
         return savedReservation;
       },
     );
+    return entities;
   }
 
   async update(id: number, booking: EditBookingDTO, user: UserDTO) {
@@ -299,11 +300,13 @@ export class BookingService {
     if (filters) {
       if (filters.endTime) where.endTime = filters.endTime;
       if (filters.startTime) where.startTime = filters.startTime;
-      if (filters.startDate && !filters.endDate) {
-        if (user.role !== 'admin') where.userId = user.id;
+      if (filters.startDate && !filters.endDate)
         where.startDate = filters.startDate;
-      }
+
       if (filters.allocatableId) where.allocatableId = filters.allocatableId;
+    }
+    if (filters && filters.startDate && filters.endDate) {
+      if (user.role !== 'admin') where.userId = user.id;
     }
 
     let allEntities = await this.bookingRepository.find({
@@ -312,6 +315,7 @@ export class BookingService {
     });
 
     if (filters && filters.startDate && filters.endDate) {
+      if (user.role !== 'admin') where.userId = user.id;
       const startDate = new Date(filters.startDate);
       const endDate = new Date(filters.endDate);
 
@@ -368,6 +372,12 @@ export class BookingService {
       },
       {} as Record<string, GetAllBookingDTO[]>,
     );
+
+    Object.keys(groupedEntities).forEach((date) => {
+      groupedEntities[date].sort((a, b) =>
+        a.startTime.localeCompare(b.startTime),
+      );
+    });
 
     return groupedEntities;
   }
