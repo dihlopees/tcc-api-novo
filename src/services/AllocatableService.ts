@@ -37,7 +37,7 @@ export class AllocatableService {
     const newAllocatable = {
       name: entity.name,
       typeId: entity.typeId,
-      blockId: entity.blockId,
+      blockId: entity.blockId === null ? undefined : entity.blockId,
       itemsAllocatableId: itemsCreated.id,
     };
     const { id } = await this.allocatableRepository.save(newAllocatable);

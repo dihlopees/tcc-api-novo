@@ -10,8 +10,8 @@ export class CreateAllocatableDTO {
   @JoiSchema(Schema.id.required())
   typeId: number;
 
-  @JoiSchema(Schema.id.optional())
-  blockId: number;
+  @JoiSchema(Schema.blockId.optional())
+  blockId: number | null;
 
   @JoiSchema(Schema.itemsAllocatable.optional())
   items?: ItemsAllocatable;

@@ -17,6 +17,8 @@ export class Schema {
     )
     .message('A valid password must be provided!');
 
+  static blockId = Joi.number().allow(null);
+
   static username = Joi.string();
   static role = Joi.string();
   static id = Joi.number().min(1);

@@ -10,7 +10,7 @@ export class EditAllocatableDTO {
   @JoiSchema(Schema.id.optional())
   typeId: number;
 
-  @JoiSchema(Schema.id.optional())
+  @JoiSchema(Schema.blockId.optional())
   blockId: number;
 
   @JoiSchema(Schema.itemsAllocatable.optional())
