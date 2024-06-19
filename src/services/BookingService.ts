@@ -51,7 +51,7 @@ export class BookingService {
     if (allocatableEntity && allocatableEntity.isDisabled)
       throw HttpExceptionDTO.warn(
         `Allocatable are disabled`,
-        'O recurso solicitado está desabilitado',
+        'O recurso solicitado está inativo',
         HttpStatus.BAD_REQUEST,
       );
 
