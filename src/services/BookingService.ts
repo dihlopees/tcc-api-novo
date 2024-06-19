@@ -44,6 +44,17 @@ export class BookingService {
       title: booking.title,
     };
 
+    const allocatableEntity = await this.allocatableRepository.findOne({
+      where: { id: booking.allocatableId },
+    });
+
+    if (allocatableEntity && allocatableEntity.isDisabled)
+      throw HttpExceptionDTO.warn(
+        `Allocatable are disabled`,
+        'O recurso solicitado está desabilitado',
+        HttpStatus.BAD_REQUEST,
+      );
+
     const startDate = new Date(booking.startDate);
     const endDate = new Date(booking.endDate);
 
