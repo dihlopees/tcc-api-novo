@@ -92,7 +92,7 @@ export class ExtrasService {
       const reservationOfExtra = reservationHasExtras.find(
         (rhx) => rhx.extraId === extra.id,
       );
-      if (!reservationOfExtra) return;
+      if (!reservationOfExtra) return extra;
       return {
         id: extra.id,
         name: extra.name,
