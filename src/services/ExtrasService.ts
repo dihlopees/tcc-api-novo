@@ -1,11 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, In, Repository } from 'typeorm';
 import { CreateExtrasDTO } from '../dtos/extras/CreateExtrasDTO';
 import { UpdateExtrasDTO } from '../dtos/extras/UpdateExtrasDTO';
 import { UserDTO } from '../dtos/users/UserDTO';
 import { Allocatable } from '../entities/AllocatableEntity';
+import { Booking } from '../entities/BookingEntity';
 import { Extras } from '../entities/ExtrasEntity';
+import { ReservationHasExtras } from '../entities/ReservationHasExtrasEntity';
 import { UnitEntity } from '../entities/UnitEntity';
 import { HttpExceptionDTO } from '../helpers/HttpExceptionDTO';
 
@@ -20,6 +22,12 @@ export class ExtrasService {
 
     @InjectRepository(Allocatable)
     private readonly allocatableRepository: Repository<Allocatable>,
+
+    @InjectRepository(Booking)
+    private readonly bookingRepository: Repository<Booking>,
+
+    @InjectRepository(ReservationHasExtras)
+    private readonly reservationHasExtrasRepository: Repository<ReservationHasExtras>,
   ) {}
 
   async create(entity: CreateExtrasDTO): Promise<Extras> {
@@ -50,6 +58,53 @@ export class ExtrasService {
     });
   }
 
+  async countAmountLeft(
+    startDate: string,
+    startTime: string,
+    allocatableId: number,
+  ) {
+    const bookingsOnSameTime = await this.bookingRepository.find({
+      where: {
+        startDate: startDate,
+        startTime: startTime,
+      },
+    });
+    const reservationsId = bookingsOnSameTime.map((it) => it.id);
+
+    const reservationHasExtras = await this.reservationHasExtrasRepository.find(
+      {
+        where: {
+          reservationId: In(reservationsId),
+        },
+      },
+    );
+
+    const allocatableEntity = await this.allocatableRepository.findOne({
+      where: { id: allocatableId },
+      relations: ['block'],
+    });
+
+    const extrasEntities = await this.extrasRepository.find({
+      where: { unitId: allocatableEntity?.block.unitId },
+    });
+
+    const extrasLeft = extrasEntities.map((extra) => {
+      const reservationOfExtra = reservationHasExtras.find(
+        (rhx) => rhx.extraId === extra.id,
+      );
+      if (!reservationOfExtra) return;
+      return {
+        id: extra.id,
+        name: extra.name,
+        unitId: extra.unitId,
+        availableQuantity:
+          extra.availableQuantity - reservationOfExtra.reservedQuantity,
+      };
+    });
+
+    return extrasLeft;
+  }
+
   async getOne(user: number) {
     const entityFound = await this.extrasRepository.findOneBy({
       id: user,
@@ -65,7 +120,12 @@ export class ExtrasService {
     return entityFound;
   }
 
-  async getAll(filter: { unitId?: number; allocatableId?: number }) {
+  async getAll(filter: {
+    unitId?: number;
+    allocatableId?: number;
+    startDate?: string;
+    startTime?: string;
+  }) {
     const where: FindManyOptions<Extras>['where'] = {};
 
     if (filter.unitId) where.unitId = filter.unitId;
@@ -78,6 +138,13 @@ export class ExtrasService {
 
       where.unitId = allocatableEntity?.block.unitId;
     }
+    if (filter.startDate && filter.startTime && filter.allocatableId)
+      return this.countAmountLeft(
+        filter.startDate,
+        filter.startTime,
+        filter.allocatableId,
+      );
+
     const allEntities = await this.extrasRepository.find({ where });
 
     if (!allEntities.length) return [];

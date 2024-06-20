@@ -41,7 +41,15 @@ export class ExtrasController {
   }
 
   @Get('/all')
-  async getAll(@Query() filter: { unitId?: number; allocatableId?: number }) {
+  async getAll(
+    @Query()
+    filter: {
+      unitId?: number;
+      allocatableId?: number;
+      startDate?: string;
+      startTime?: string;
+    },
+  ) {
     const allEntities = await this.extrasService.getAll(filter);
 
     return new ResponseDTO(HttpStatus.OK, 'Encontrados', allEntities);
